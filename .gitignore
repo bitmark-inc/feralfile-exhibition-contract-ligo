@@ -1,0 +1,5 @@
+.venv
+.env.json
+.vscode
+
+compilation
