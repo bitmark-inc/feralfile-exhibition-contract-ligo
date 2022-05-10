@@ -1,34 +1,20 @@
 #include "../fa2/fa2/fa2_interface.mligo"
-#include "../fa2/admin/simple_admin.mligo"
+#include "../fa2/admin/pausable_simple_admin.mligo"
 #include "../fa2/token/fa2_nft_token.mligo"
-#include "../fa2/minter/nft_minter.mligo"
 
 #include "./ff_custom_token.mligo"
-
-type artwork =
-[@layout:comb]
-{
-  artist_name : string;
-  edition_size : nat;
-  fingerprint : string;
-  title : string;
-  token_start_id : nat;
-}
-
-type artworks = (bytes, artwork) map
-
-type bitmark_ids = string set
+#include "./ff_minter.mligo"
+#include "./ff_interface.mligo"
 
 type asset_storage = {
-  metadata : contract_metadata;
   assets : token_storage;
   admin : admin_storage;
   minter : minter_storage;
-  trustee : address;
-  artworks: artworks;
-  bitmark_ids: bitmark_ids;
+  artworks: artwork_storage;
+  bitmark_ids: bitmark_id_storage;
+  metadata : contract_metadata;
   max_edition: nat;
-
+  trustee : address;
 }
 
 type asset_entrypoints =
@@ -39,8 +25,10 @@ type asset_entrypoints =
 
 [@inline]
 let fail_if_not_minter (storage : asset_storage) : unit =
-  let _ = fail_if_not_admin storage.admin in
-  unit
+  if Tezos.sender <> storage.trustee 
+  then
+    let _ = fail_if_not_admin storage.admin in unit
+  else unit
 
 let main (param, storage : asset_entrypoints * asset_storage)
     : (operation list) * asset_storage =
@@ -65,8 +53,8 @@ let main (param, storage : asset_entrypoints * asset_storage)
   | Minter m ->
     let _ = fail_if_paused storage.admin in
     let _ = fail_if_not_minter storage in
-    let new_assets, new_minter = minter_main (m, storage.assets, storage.minter) in
-    let new_s = { storage with assets = new_assets; minter = new_minter; } in
+    let new_assets, new_minter, new_bitmark_ids = minter_main (m, storage.assets, storage.bitmark_ids, storage.minter) in
+    let new_s = { storage with assets = new_assets; minter = new_minter; bitmark_ids = new_bitmark_ids; } in
     ([] : operation list), new_s
 
 let sample_storage : asset_storage = {
@@ -78,6 +66,7 @@ let sample_storage : asset_storage = {
   admin = {
     admin = ("tz1YPSCGWXwBdTncK2aCctSZAXWvGsGwVJqU" : address);
     pending_admin = (None : address option);
+    paused = false
   };
   minter = ();
   metadata = Big_map.literal [
@@ -85,7 +74,7 @@ let sample_storage : asset_storage = {
     ("content", 0x00) (* bytes encoded UTF-8 JSON *)
   ];
   trustee = ("tz1YPSCGWXwBdTncK2aCctSZAXWvGsGwVJqU" : address);
-  artworks = (Map.empty : artworks);
-  bitmark_ids = (Set.empty : bitmark_ids);
+  artworks = (Map.empty : artwork_storage);
+  bitmark_ids = (Big_map.empty : bitmark_id_storage);
   max_edition = 10n
 }
