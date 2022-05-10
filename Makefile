@@ -32,6 +32,5 @@ else
 	INCLUDE_DIR="/usr/local/Cellar/libsecp256k1/0.1/include" \
 	./tools/with_venv.sh pip install --no-cache-dir pytezos
 endif
-
 test:
-	${LIGO} run dry-run --entry-point asset_main src/ff_fa2_asset.mligo 'TransferByAdmin([])' '4'
+	${LIGO} run dry-run --entry-point main src/ff_fa2_asset.mligo 'Transfer ([])' 'sample_storage'
