@@ -1,0 +1,3 @@
+[submodule "nft-tutiorial"]
+	path = nft-tutiorial
+	url = https://github.com/oxheadalpha/nft-tutorial.git

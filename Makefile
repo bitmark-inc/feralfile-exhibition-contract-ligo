@@ -34,4 +34,4 @@ else
 endif
 
 test:
-	${LIGO} run dry-run --entry-point asset_main src/ff_contract.mligo 'TransferByAdmin([])' '4'
+	${LIGO} run dry-run --entry-point asset_main src/ff_fa2_asset.mligo 'TransferByAdmin([])' '4'

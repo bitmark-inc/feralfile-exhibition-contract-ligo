@@ -1,6 +1,3 @@
-#if !FF_NFT_TOKEN
-#define FF_NFT_TOKEN
-
 type transfer_by_admin =
 [@layout:comb]
 {
@@ -53,5 +50,3 @@ let ff_main (param, storage : ff_entry_points * token_storage)
       (txs, storage.ledger) in
     let new_storage = { storage with ledger = new_ledger; } in
     ([] : operation list), new_storage
-
-#endif
