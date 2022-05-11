@@ -53,8 +53,8 @@ let main (param, storage : asset_entrypoints * asset_storage)
   | Minter m ->
     let _ = fail_if_paused storage.admin in
     let _ = fail_if_not_minter storage in
-    let new_assets, new_minter = minter_main (m, storage.assets, storage.minter) in
-    let new_s = { storage with assets = new_assets; minter = new_minter; } in
+    let new_assets, new_minter, new_artworks = minter_main (m, storage.assets, storage.minter, storage.artworks, storage.bytes_nat_convert_map) in
+    let new_s = { storage with assets = new_assets; minter = new_minter; artworks = new_artworks; } in
     ([] : operation list) , new_s
 
 let sample_storage : asset_storage = {

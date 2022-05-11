@@ -6,9 +6,10 @@ type artwork =
   fingerprint : string;
   title : string;
   token_start_id : nat;
+  max_edition: nat;
 }
 
-type artwork_storage = (bytes, artwork) map
+type artwork_storage = (nat, artwork) map
 type bytes_nat_convert_map = (bytes, nat) map
 
 
