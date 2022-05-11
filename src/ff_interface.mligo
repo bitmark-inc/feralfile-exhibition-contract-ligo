@@ -9,6 +9,8 @@ type artwork =
 }
 
 type artwork_storage = (bytes, artwork) map
+type bytes_nat_convert_map = (bytes, nat) map
+
 
 type bitmark_id_storage = (string, nat) big_map 
 
@@ -16,6 +18,6 @@ type ff_token_metadata =
 [@layout:comb]
 {
   token_metadata : token_metadata;
-  bitmark_id: string;
-  // artwork_id: nat;
+  artwork_id: nat;
+  edition: nat;
 }
