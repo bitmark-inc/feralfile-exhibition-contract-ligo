@@ -19,6 +19,14 @@ compile-storage:
 deploy:
 	./tools/with_venv.sh python ./tools/originate.py
 
+tc-init:
+	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes tezos-client --endpoint $(shell jq -r .shell .env.json) config update
+	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes tezos-client import secret key default unencrypted:$(shell jq -r .key .env.json) --force
+
+tc-deploy: compile compile-storage
+	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes tezos-client originate contract FFExhibition transferring 0 from default \
+	running ./compilation/contract.tz -D --verbose-signing --burn-cap 15 --init '$(shell cat ./compilation/storage.tz)'
+
 env:
 	git submodule init
 	git submodule update
