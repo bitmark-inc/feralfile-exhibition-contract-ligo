@@ -11,10 +11,10 @@ clean:
 	mkdir ./compilation
 
 compile:
-	${LIGO} compile contract src/increment.mligo -o compilation/contract.tz
+	${LIGO} compile contract src/ff_fa2_asset.mligo -o compilation/contract.tz
 
 compile-storage:
-	${LIGO} compile storage src/increment.mligo default_storage -o compilation/storage.tz
+	${LIGO} compile storage src/ff_fa2_asset.mligo 'default_storage' -o compilation/storage.tz
 
 deploy:
 	./tools/with_venv.sh python ./tools/originate.py
@@ -35,4 +35,4 @@ else
 	./tools/with_venv.sh pip install --no-cache-dir pytezos
 endif
 test:
-	${LIGO} run dry-run --entry-point main src/ff_fa2_asset.mligo 'Transfer ([])' 'sample_storage'
+	${LIGO} run dry-run --entry-point main src/ff_fa2_asset.mligo 'Transfer ([])' 'default_storage'

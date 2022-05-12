@@ -9,6 +9,7 @@ type transfer_by_admin =
 }
 
 type ff_entry_points =
+  | Never of never
   | TransferByAdmin of transfer_by_admin list
 
 let transfer_by_admin (txs, ledger
@@ -39,12 +40,10 @@ let transfer_by_admin (txs, ledger
   in 
   List.fold make_admin_transfer txs ledger
 
-(* let register_artwork*)
-(* let mint_editions *)
-
 let ff_main (param, storage : ff_entry_points * token_storage)
     : (operation  list) * token_storage =
   match param with
+  | Never _ -> (failwith "INVALID_INVOCATION" : (operation  list) * token_storage) 
   | TransferByAdmin txs -> 
     let new_ledger = transfer_by_admin 
       (txs, storage.ledger) in

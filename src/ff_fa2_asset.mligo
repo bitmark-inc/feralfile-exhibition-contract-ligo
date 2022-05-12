@@ -6,13 +6,13 @@
 #include "./ff_minter.mligo"
 #include "./ff_interface.mligo"
 
-type asset_storage = {
+type asset_storage = 
+{
   assets : token_storage;
   admin : admin_storage;
   minter : minter_storage;
   artworks: artwork_storage;
   metadata : contract_metadata;
-  max_edition: nat;
   trustee : address;
   bytes_nat_convert_map : bytes_nat_convert_map
 }
@@ -57,25 +57,24 @@ let main (param, storage : asset_entrypoints * asset_storage)
     let new_s = { storage with assets = new_assets; minter = new_minter; artworks = new_artworks; } in
     ([] : operation list) , new_s
 
-let sample_storage : asset_storage = {
-  assets = {
-    token_metadata = (Big_map.empty : token_metadata_storage);
-    ledger = (Big_map.empty : ledger);
-    operators = (Big_map.empty : operator_storage);
-  };
+let default_storage: asset_storage = {
+  assets= ({
+    token_metadata = (Big_map.literal[]: token_metadata_storage);
+    ledger = (Big_map.literal[] : ledger);
+    operators = (Big_map.literal[] : operator_storage);
+  }: token_storage);
   admin = {
-    admin = ("tz1YPSCGWXwBdTncK2aCctSZAXWvGsGwVJqU" : address);
+    admin = Tezos.sender;
     pending_admin = (None : address option);
-    paused = false
+    paused = false;
   };
   minter = ();
+  artworks = (Map.empty : artwork_storage);
   metadata = Big_map.literal [
     ("", Bytes.pack "tezos-storage:content" );
     ("content", 0x00) (* bytes encoded UTF-8 JSON *)
   ];
-  trustee = ("tz1YPSCGWXwBdTncK2aCctSZAXWvGsGwVJqU" : address);
-  artworks = (Map.empty : artwork_storage);
-  max_edition = 10n;
+  trustee = ("tz2Vp4nbnLhNs8fi2vCjocHgv2FFqR3zK4y6" : address);
   bytes_nat_convert_map = (Map.literal [
     (0x00, 0n); (0x01, 1n);
     (0x02, 2n); (0x03, 3n);
@@ -205,5 +204,5 @@ let sample_storage : asset_storage = {
     (0xfa, 250n); (0xfb, 251n);
     (0xfc, 252n); (0xfd, 253n);
     (0xfe, 254n); (0xff, 255n)
-  ]: bytes_nat_convert_map)
+  ]: bytes_nat_convert_map);
 }

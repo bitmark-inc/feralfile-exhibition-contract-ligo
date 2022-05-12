@@ -18,7 +18,6 @@ type register_arts_param = artwork list
 type issue_artworks_editions_param = nat list
 
 type minter_entrypoints =
-	| Never of never
 	| MintEditions of mint_edition_param list
 	| RegisterArtworks of register_arts_param
 
@@ -77,7 +76,6 @@ let minter_main (param, _tokens, _minter, _artworks, _bytes_nat_convert_map
 	: minter_entrypoints * token_storage * minter_storage * artwork_storage *bytes_nat_convert_map)
 	: token_storage * minter_storage * artwork_storage=
 	match param with
-	| Never _ -> (failwith "INVALID_INVOCATION" : token_storage * minter_storage * artwork_storage  )
 	| MintEditions m ->
 		let source_data = {
 			ledger = _tokens.ledger;
