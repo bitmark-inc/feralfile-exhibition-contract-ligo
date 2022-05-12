@@ -23,9 +23,26 @@ tc-init:
 	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes tezos-client --endpoint $(shell jq -r .shell .env.json) config update
 	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes tezos-client import secret key default unencrypted:$(shell jq -r .key .env.json) --force
 
-tc-deploy: compile compile-storage
+tc-dry-deploy: compile compile-storage
 	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes tezos-client originate contract FFExhibition transferring 0 from default \
 	running ./compilation/contract.tz -D --verbose-signing --burn-cap 15 --init '$(shell cat ./compilation/storage.tz)'
+
+tc-deploy: compile compile-storage
+	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes tezos-client originate contract FFExhibition transferring 0 from default \
+	running ./compilation/contract.tz --burn-cap 15 --init '$(shell cat ./compilation/storage.tz)'
+	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes tezos-client forget all contracts --force
+
+test-register-artwork:
+	TEZOS_RPC_URL=$(shell jq -r .shell .env.json) \
+	DEPLOYER_PRIVATE_KEY=$(shell jq -r .key .env.json) \
+	CONTRACT_ADDRESS=$(shell jq -r .contract .env.json) \
+	npm run test-register-artwork
+
+test-mint-editions:
+	TEZOS_RPC_URL=$(shell jq -r .shell .env.json) \
+	DEPLOYER_PRIVATE_KEY=$(shell jq -r .key .env.json) \
+	CONTRACT_ADDRESS=$(shell jq -r .contract .env.json) \
+	npm run test-mint-editions
 
 env:
 	git submodule init

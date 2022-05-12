@@ -1,0 +1,28 @@
+{
+  "name": "feralfile-contract-tezos",
+  "version": "1.0.0",
+  "main": "originator.js",
+  "scripts": {
+    "deploy-contracts": "ts-node testnet-test/deploy.ts",
+    "test-register-artwork": "ts-node testnet-test/register_artwork.ts",
+    "test-mint-editions": "ts-node testnet-test/mint_editions.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@taquito/signer": "^11.0.0",
+    "@taquito/taquito": "^11.0.0",
+    "@types/dotenv": "^8.2.0",
+    "dotenv": "^16.0.0",
+    "ts-node": "^10.7.0"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "description": "",
+  "devDependencies": {
+    "typescript": "^4.6.4"
+  }
+}

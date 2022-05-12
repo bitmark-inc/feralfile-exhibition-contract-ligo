@@ -64,7 +64,7 @@ let default_storage: asset_storage = {
     operators = (Big_map.literal[] : operator_storage);
   }: token_storage);
   admin = {
-    admin = Tezos.sender;
+    admin = ("tz1MpyrZzHRy7JjRJzENcEgPcBMjGfXuxhb6" : address);
     pending_admin = (None : address option);
     paused = false;
   };
