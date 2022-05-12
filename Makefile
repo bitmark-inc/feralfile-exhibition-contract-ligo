@@ -20,6 +20,8 @@ deploy:
 	./tools/with_venv.sh python ./tools/originate.py
 
 env:
+	git submodule init
+	git submodule update
 	virtualenv .venv
 ifeq (${ARCH}, arm64)
 	CFLAGS="-I/opt/homebrew/Cellar/gmp/6.2.1_1/include/ -L/opt/homebrew/Cellar/gmp/6.2.1_1/lib/" \
