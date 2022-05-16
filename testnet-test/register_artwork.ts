@@ -26,7 +26,6 @@ const mint = async function () {
       edition_size: 10,
       fingerprint: "IamFingerprint",
       title: "test",
-      token_start_id: 0,
       max_edition: 10
     }]).send();
     await op.confirmation()

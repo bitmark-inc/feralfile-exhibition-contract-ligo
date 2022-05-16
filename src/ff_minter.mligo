@@ -13,13 +13,20 @@ type mint_edition_param =
 	tokens : ff_token_metadata list;
 }
 
-type register_arts_param = artwork list
+type artwork_param =
+[@layout:comb]
+{
+  title : string;
+  artist_name : string;
+  fingerprint : string;
+  max_edition : nat;
+}
 
 type issue_artworks_editions_param = nat list
 
 type minter_entrypoints =
 	| Mint_editions of mint_edition_param list
-	| Register_artworks of register_arts_param
+	| Register_artworks of artwork_param list
 
 type mint_edition_acc = {
 	token_metadata : token_metadata_storage;
@@ -60,22 +67,32 @@ let rec bytes_to_nat(convet_map, target, index, result : bytes_nat_convert_map *
 	else
 		result
 
-let register_artworks(arts, param, convet_map : artwork_storage * register_arts_param * bytes_nat_convert_map) : artwork_storage =
-	let register = (fun (arts, art : artwork_storage * artwork) ->
-		let packed_f = Bytes.pack art.fingerprint in
-		let artwork_id = Crypto.keccak packed_f in
-		if Map.mem artwork_id arts
-		then (failwith "USED_ARTWORK_ID" : artwork_storage)
+(**
+register_artworks creates artworks for an exhibition
+*)
+let register_artworks(param, artworks, convet_map : artwork_param list * artwork_storage * bytes_nat_convert_map) : artwork_storage =
+	let register = (fun (artworks, artwork_param : artwork_storage * artwork_param) ->
+		let packed_fingerprint = Bytes.pack artwork_param.fingerprint in
+
+		(** Generate artwork_id using keccak256 algorithm *)
+		let artwork_id = Crypto.keccak packed_fingerprint in
+		if Map.mem artwork_id artworks then (failwith "USED_ARTWORK_ID" : artwork_storage)
 		else
 			let artwork_id_nat = bytes_to_nat(convet_map, artwork_id, 0n, 0n) in
-			let art_with_id_nat = { art with token_start_id = artwork_id_nat; } in
-			Map.add artwork_id art_with_id_nat arts
+			let new_artwork = {
+				artist_name = artwork_param.artist_name;
+				fingerprint = artwork_param.fingerprint;
+				title = artwork_param.title;
+				max_edition = artwork_param.max_edition;
+				token_start_id = artwork_id_nat;
+			} in
+			Map.add artwork_id new_artwork artworks
 	) in
-	List.fold register param arts
+	List.fold register param artworks
 
 let minter_main (param, _tokens, _minter, _artworks, _bytes_nat_convert_map
 	: minter_entrypoints * token_storage * minter_storage * artwork_storage *bytes_nat_convert_map)
-	: token_storage * minter_storage * artwork_storage=
+	: token_storage * minter_storage * artwork_storage =
 	match param with
 	| Mint_editions m ->
 		let source_data = {
@@ -88,6 +105,6 @@ let minter_main (param, _tokens, _minter, _artworks, _bytes_nat_convert_map
 			token_metadata = minted.token_metadata;
 		} in
 		new_tokens, _minter, _artworks
-	| Register_artworks artp ->
-		let new_artworks = register_artworks (_artworks, artp, _bytes_nat_convert_map) in
+	| Register_artworks a ->
+		let new_artworks = register_artworks (a, _artworks, _bytes_nat_convert_map) in
 		_tokens, _minter, new_artworks
