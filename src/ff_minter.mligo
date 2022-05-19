@@ -28,33 +28,36 @@ type minter_entrypoints =
 	| Mint_editions of mint_edition_param list
 	| Register_artworks of artwork_param list
 
-type mint_edition_acc = {
+type mint_storage = {
 	token_metadata : token_metadata_storage;
 	ledger : ledger;
 }
 
-let mint_editions(acc, param, artworks : mint_edition_acc * mint_edition_param list * artwork_storage) : mint_edition_acc =
-	let mint = (fun (acc, m : mint_edition_acc * mint_edition_param) ->
+let mint_editions(param, storage, artworks : mint_edition_param list * mint_storage * artwork_storage) : mint_storage =
+	let mint = (fun (storage, m : mint_storage * mint_edition_param) ->
 		List.fold
-			(fun (acc, t : mint_edition_acc * ff_token_metadata) ->
+			(fun (storage, t : mint_storage * ff_token_metadata) ->
 					match Map.find_opt t.artwork_id artworks with
-						| None -> (failwith "ARTWORK_NOT_FOUND" : mint_edition_acc)
+						| None -> (failwith "ARTWORK_NOT_FOUND" : mint_storage)
 						| Some art ->
-							let new_token_metadata = {t.token_metadata with token_id = art.token_start_id + t.edition} in
-							if new_token_metadata.token_id < art.token_start_id || new_token_metadata.token_id >= art.token_start_id + art.max_edition
-							  then (failwith "TOKEN_ID_OUT_OF_ARTWORK_MAX_EDITION" : mint_edition_acc)
-							else if Big_map.mem new_token_metadata.token_id acc.token_metadata
-							  then (failwith "USED_TOKEN_ID" : mint_edition_acc)
+							let new_token_metadata = {
+								token_id = art.token_start_id + t.edition;
+								token_info = t.token_info;
+							} in
+							if new_token_metadata.token_id < art.token_start_id || new_token_metadata.token_id > art.token_start_id + art.max_edition
+							  then (failwith "TOKEN_ID_OUT_OF_ARTWORK_MAX_EDITION" : mint_storage)
+							else if Big_map.mem new_token_metadata.token_id storage.token_metadata
+							  then (failwith "USED_TOKEN_ID" : mint_storage)
 							else
-								let new_meta = Big_map.add new_token_metadata.token_id new_token_metadata acc.token_metadata in
-								let new_ledger = Big_map.add new_token_metadata.token_id m.owner acc.ledger in
+								let new_meta = Big_map.add new_token_metadata.token_id new_token_metadata storage.token_metadata in
+								let new_ledger = Big_map.add new_token_metadata.token_id m.owner storage.ledger in
 								{
 									token_metadata = new_meta;
 									ledger = new_ledger;
 								}
-			) m.tokens acc
+			) m.tokens storage
 	) in
-	List.fold mint param acc
+	List.fold mint param storage
 
 let rec bytes_to_nat(convet_map, target, index, result : bytes_nat_convert_map * bytes * nat * nat) : nat =
 	if Bytes.length target = 0n then (failwith "BYTES_LENGTH_ZERO" : nat)
@@ -95,14 +98,14 @@ let minter_main (param, _tokens, _minter, _artworks, _bytes_nat_convert_map
 	: token_storage * minter_storage * artwork_storage =
 	match param with
 	| Mint_editions m ->
-		let source_data = {
+		let mint_in = {
 			ledger = _tokens.ledger;
 			token_metadata = _tokens.token_metadata;
 		} in
-		let minted = mint_editions (source_data, m, _artworks) in
+		let mint_out = mint_editions (m, mint_in, _artworks) in
 		let new_tokens = { _tokens with
-			ledger = minted.ledger;
-			token_metadata = minted.token_metadata;
+			ledger = mint_out.ledger;
+			token_metadata = mint_out.token_metadata;
 		} in
 		new_tokens, _minter, _artworks
 	| Register_artworks a ->
