@@ -1,23 +1,33 @@
-type authorized_transfer =
+type authorized_transfers_destination =
+[@layout:comb]
+{
+  to_ : address;
+  token_id : token_id;
+  amount : nat;
+  sig : signature;
+}
+
+type authorized_transfers =
 [@layout:comb]
 {
   from_ : address;
   pk : key;
-  ts : bytes;(* convert timestamp to bytes *)
-  sig : signature;
-  txs : transfer_destination list;
+  ts : timestamp;
+  txs : authorized_transfers_destination list;
 }
 
 type ff_entry_points =
   | Never of never
-  | Authorized_transfer of authorized_transfer list
+  | Authorized_transfers of authorized_transfers list
 
-let authorized_transfer (txs, ledger
-    : (authorized_transfer list) * ledger) : ledger =
+let authorized_transfers (txs, ledger
+    : (authorized_transfers list) * ledger) : ledger =
   (* process individual transfer *)
-  let make_admin_transfer = (fun (l, tx : ledger * authorized_transfer) ->
+  let make_admin_transfer = (fun (l, tx : ledger * authorized_transfers) ->
+    let within: int = 300 in (* 5 min*)
+    let p_bytes_ts = Bytes.pack tx.ts in
     List.fold 
-      (fun (ll, dst : ledger * transfer_destination) ->
+      (fun (ll, dst : ledger * authorized_transfers_destination) ->
         if dst.amount = 0n
         then ll
         else if dst.amount <> 1n
@@ -30,11 +40,14 @@ let authorized_transfer (txs, ledger
             if o <> tx.from_
             then (failwith fa2_insufficient_balance : ledger)
             else 
-              (* validate signature *)
-              if Crypto.check tx.pk tx.sig tx.ts = false
-              then (failwith fa2_not_owner : ledger)
-              else
-                Big_map.update dst.token_id (Some dst.to_) ll
+                (* validate signature *)
+                let p_bytes_to_ = Bytes.pack dst.to_ in
+                let p_bytes_token_id = Bytes.pack dst.token_id in
+                let bytes_msg = Bytes.concat p_bytes_ts (Bytes.concat p_bytes_to_ p_bytes_token_id) in
+                if Crypto.check tx.pk dst.sig bytes_msg = false || Tezos.now > tx.ts + within
+                  then (failwith fa2_auth_transfer_sig_wrong : ledger) 
+                else 
+                  Big_map.update dst.token_id (Some dst.to_) ll
       ) tx.txs l
   )
   in 
@@ -44,7 +57,7 @@ let ff_main (param, storage : ff_entry_points * token_storage)
     : (operation  list) * token_storage =
   match param with
   | Never _ -> (failwith "INVALID_INVOCATION" : (operation  list) * token_storage) 
-  | Authorized_transfer txs -> 
-    let new_ledger = authorized_transfer (txs, storage.ledger) in
+  | Authorized_transfers txs -> 
+    let new_ledger = authorized_transfers (txs, storage.ledger) in
     let new_storage = { storage with ledger = new_ledger; } in
     ([] : operation list), new_storage

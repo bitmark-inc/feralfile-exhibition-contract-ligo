@@ -12,7 +12,7 @@ dotenv.config();
 
 const Tezos = new TezosToolkit(<string>process.env.TEZOS_RPC_URL);
 
-const mint = async function () {
+const register_art = async function () {
   const adminSigner = await InMemorySigner.fromSecretKey(<string>process.env.DEPLOYER_PRIVATE_KEY);
   Tezos.setProvider({
     signer: adminSigner
@@ -35,4 +35,4 @@ const mint = async function () {
   }
 }
 
-mint()
+register_art()

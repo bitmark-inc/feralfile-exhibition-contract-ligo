@@ -19,6 +19,7 @@ const mint = async function () {
   });
 
   const contract = await Tezos.wallet.at(<string>process.env.CONTRACT_ADDRESS);
+  const adminAddr = await adminSigner.publicKeyHash()
 
   // use ipfs metadata
   let m = MichelsonMap.fromLiteral({
@@ -29,7 +30,7 @@ const mint = async function () {
     let op = await contract.methods.mint_editions(
       [
         {
-          owner: "tz2Vp4nbnLhNs8fi2vCjocHgv2FFqR3zK4y6",
+          owner: adminAddr,
           tokens: [
             {
               token_info: m,

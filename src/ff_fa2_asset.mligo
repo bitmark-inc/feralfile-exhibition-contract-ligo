@@ -2,9 +2,9 @@
 #include "../fa2/admin/pausable_simple_admin.mligo"
 #include "../fa2/token/fa2_nft_token.mligo"
 
-#include "./ff_custom_token.mligo"
-#include "./ff_minter.mligo"
 #include "./ff_interface.mligo"
+#include "./ff_minter.mligo"
+#include "./ff_custom_token.mligo"
 
 type asset_storage = 
 {

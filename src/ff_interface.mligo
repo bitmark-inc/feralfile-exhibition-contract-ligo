@@ -28,3 +28,5 @@ type ff_token_metadata =
   artwork_id: bytes;
   edition: nat;
 }
+
+let fa2_auth_transfer_sig_wrong = "FA2_INVALID_SIGNATURE_OR_TIMESTAMP"
