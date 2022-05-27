@@ -24,7 +24,7 @@ type bytes_nat_convert_map = (bytes, nat) map
 type ff_token_metadata =
 [@layout:comb]
 {
-  token_metadata : token_metadata;
+  token_info: (string, bytes) map;
   artwork_id: bytes;
   edition: nat;
 }

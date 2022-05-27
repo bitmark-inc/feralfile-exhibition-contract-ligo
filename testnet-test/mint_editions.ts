@@ -32,10 +32,7 @@ const mint = async function () {
           owner: "tz2Vp4nbnLhNs8fi2vCjocHgv2FFqR3zK4y6",
           tokens: [
             {
-              token_metadata: {
-                token_id: 0,
-                token_info: m
-              },
+              token_info: m,
               artwork_id: "b2b4fd6e12f9d59de33f599a41c23e38c29d2b7ce468b1bd28cacc0321f33046",
               edition: 0
             }
