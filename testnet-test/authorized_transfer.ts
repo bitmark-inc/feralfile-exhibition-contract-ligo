@@ -55,10 +55,10 @@ const auth_transfer = async function () {
         await op1.confirmation()
 
         // transfer back from 0 xtz account to admin but call from admin
-        const now = (Date.now() / 1000 | 0).toString()
+        const expiry = ((Date.now() / 1000 | 0) + 300).toString()
         const pk = await noXTZSigner.publicKey()
 
-        let packedTimestamp = packData({ int: now }, { prim: 'timestamp' });
+        let packedTimestamp = packData({ int: expiry }, { prim: 'timestamp' });
         let packedTo = packData({ string: adminAddr }, { prim: 'address' });
         let packedTokenID = packData({ int: tokenID }, { prim: 'int' });
 
@@ -76,7 +76,7 @@ const auth_transfer = async function () {
                 {
                     from_: noXTZAddr,
                     pk: pk,
-                    ts: now,
+                    expiry: expiry,
                     txs: [
                         {
                             to_: adminAddr,

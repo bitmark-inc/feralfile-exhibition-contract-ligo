@@ -23,8 +23,7 @@ const register_art = async function () {
   try {
     let op = await contract.methods.register_artworks([{
       artist_name: "BRDN-test",
-      edition_size: 10,
-      fingerprint: "IamFingerprint",
+      fingerprint: Uint8Array.from(Buffer.from("IamFingerprint")),
       title: "test",
       max_edition: 10
     }]).send();
