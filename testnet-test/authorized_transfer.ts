@@ -62,12 +62,16 @@ const auth_transfer = async function () {
         let packedTo = packData({ string: adminAddr }, { prim: 'address' });
         let packedTokenID = packData({ int: tokenID }, { prim: 'int' });
 
-        let bytesData = buf2hex(Buffer.from(packedTimestamp.concat(packedTo).concat(packedTokenID)))
-        console.log(bytesData)
+        let bytesData = Buffer.from(packedTimestamp.concat(packedTo).concat(packedTokenID))
 
-        const sts = await noXTZSigner.sign(bytesData)
+        let prefix = Buffer.from("54657a6f73205369676e6564204d6573736167653a", "hex")
 
-        let op2 = await contract.methods.authorized_transfer(
+        let rm = Buffer.concat([prefix, bytesData])
+        let result_msg = packData({ bytes: rm.toString('hex') }, { prim: 'bytes' })
+
+        const sts = await noXTZSigner.sign(buf2hex(Buffer.from(result_msg)))
+
+        let op2 = await contract.methods.authorized_transfers(
             [
                 {
                     from_: noXTZAddr,

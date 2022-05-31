@@ -14,7 +14,8 @@ type asset_storage =
   artworks: artwork_storage;
   metadata : contract_metadata;
   trustee : address;
-  bytes_nat_convert_map : bytes_nat_convert_map
+  bytes_nat_convert_map : bytes_nat_convert_map;
+  signature_prefix: bytes;
 }
 
 type asset_entrypoints =
@@ -24,7 +25,7 @@ type asset_entrypoints =
   | Minter of minter_entrypoints
 
 [@inline]
-let fail_if_not_minter (storage : asset_storage) : unit =
+let fail_if_not_trustee (storage : asset_storage) : unit =
   if Tezos.sender <> storage.trustee 
   then
     let _ = fail_if_not_admin storage.admin in unit
@@ -40,8 +41,8 @@ let main (param, storage : asset_entrypoints * asset_storage)
     (ops, new_s)
 
   | FFAssets a ->
-    let _ = fail_if_not_admin storage.admin in
-    let ops, new_assets = ff_main (a, storage.assets) in
+    let _ = fail_if_not_trustee storage in
+    let ops, new_assets = ff_main (a, storage.assets, storage.signature_prefix) in
     let new_s = { storage with assets = new_assets; } in
     (ops, new_s)
 
@@ -52,7 +53,7 @@ let main (param, storage : asset_entrypoints * asset_storage)
 
   | Minter m ->
     let _ = fail_if_paused storage.admin in
-    let _ = fail_if_not_minter storage in
+    let _ = fail_if_not_trustee storage in
     let new_assets, new_minter, new_artworks = minter_main (m, storage.assets, storage.minter, storage.artworks, storage.bytes_nat_convert_map) in
     let new_s = { storage with assets = new_assets; minter = new_minter; artworks = new_artworks; } in
     ([] : operation list) , new_s
@@ -74,7 +75,8 @@ let default_storage: asset_storage = {
     ("", Bytes.pack "tezos-storage:content" );
     ("content", 0x00) (* bytes encoded UTF-8 JSON *)
   ];
-  trustee = ("tz2Vp4nbnLhNs8fi2vCjocHgv2FFqR3zK4y6" : address);
+  trustee = ("tz1Z7o6TDzBGzKerNMQndWEpVui1MCvRfN9A" : address);
+  signature_prefix = 0x54657a6f73205369676e6564204d6573736167653a;
   bytes_nat_convert_map = (Map.literal [
     (0x00, 0n); (0x01, 1n);
     (0x02, 2n); (0x03, 3n);
