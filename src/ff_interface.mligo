@@ -21,14 +21,6 @@ generating token start id with nat type.
 *)
 type bytes_nat_convert_map = (bytes, nat) map
 
-type ff_token_metadata =
-[@layout:comb]
-{
-  token_info: (string, bytes) map;
-  artwork_id: bytes;
-  edition: nat;
-}
-
 let fa2_invalid_signature = "FA2_INVALID_SIGNATURE"
 let fa2_publickey_address_mismatch = "FA2_PUBLICKEY_ADDRESS_MISMATCH"
 let fa2_expired_timestamp = "FA2_EXPIRED_TIMESTAMP"
