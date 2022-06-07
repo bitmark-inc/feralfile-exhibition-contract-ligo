@@ -3,20 +3,15 @@ type authorized_transfer =
 {
   from_ : address;
   pk : key;
-  ts : bytes;(* convert timestamp to bytes *)
+  ts : bytes; (* convert timestamp to bytes *)
   sig : signature;
   txs : transfer_destination list;
 }
 
-type ff_entry_points =
-  | Never of never
-  | Authorized_transfer of authorized_transfer list
-
-let authorized_transfer (txs, ledger
-    : (authorized_transfer list) * ledger) : ledger =
+let _authorized_transfer (transfers, ledger : authorized_transfer list * ledger) : ledger =
   (* process individual transfer *)
   let make_admin_transfer = (fun (l, tx : ledger * authorized_transfer) ->
-    List.fold 
+    List.fold
       (fun (ll, dst : ledger * transfer_destination) ->
         if dst.amount = 0n
         then ll
@@ -26,10 +21,10 @@ let authorized_transfer (txs, ledger
           let owner = Big_map.find_opt dst.token_id ll in
           match owner with
           | None -> (failwith fa2_token_undefined : ledger)
-          | Some o -> 
+          | Some o ->
             if o <> tx.from_
             then (failwith fa2_insufficient_balance : ledger)
-            else 
+            else
               (* validate signature *)
               if Crypto.check tx.pk tx.sig tx.ts = false
               then (failwith fa2_not_owner : ledger)
@@ -37,14 +32,12 @@ let authorized_transfer (txs, ledger
                 Big_map.update dst.token_id (Some dst.to_) ll
       ) tx.txs l
   )
-  in 
-  List.fold make_admin_transfer txs ledger
+  in
+  List.fold make_admin_transfer transfers ledger
 
-let ff_main (param, storage : ff_entry_points * token_storage)
-    : (operation  list) * token_storage =
-  match param with
-  | Never _ -> (failwith "INVALID_INVOCATION" : (operation  list) * token_storage) 
-  | Authorized_transfer txs -> 
-    let new_ledger = authorized_transfer (txs, storage.ledger) in
-    let new_storage = { storage with ledger = new_ledger; } in
-    ([] : operation list), new_storage
+(** authorized_transfer takes authorized transfer requests from users
+    and executes them from the trustee account *)
+let authorized_transfer (transfers, token_storage : authorized_transfer list * token_storage) : token_storage =
+    let new_ledger = _authorized_transfer (transfers, token_storage.ledger) in
+    let new_storage = { token_storage with ledger = new_ledger; } in
+    new_storage
