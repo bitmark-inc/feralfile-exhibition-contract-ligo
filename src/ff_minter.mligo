@@ -60,27 +60,26 @@ type mint_storage = {
 mint_editions mint editions for the exhibition
 *)
 let mint_editions(param, storage, artworks : mint_edition_param list * mint_storage * artwork_storage) : mint_storage =
-	let mint_tokens_for_owner(owner : address) =
-		fun (storage, t : mint_storage * ff_token_metadata) ->
-			match Map.find_opt t.artwork_id artworks with
-				| None -> (failwith "ARTWORK_NOT_FOUND" : mint_storage)
-				| Some art ->
-					let _ = fail_if_invalid_edition(t.edition, art) in
+	let mint_tokens_for_owner (owner: address) (storage, t : mint_storage * ff_token_metadata) =
+		match Map.find_opt t.artwork_id artworks with
+			| None -> (failwith "ARTWORK_NOT_FOUND" : mint_storage)
+			| Some art ->
+				let _ = fail_if_invalid_edition(t.edition, art) in
 
-					let token_id = art.token_start_id + t.edition in
-					let new_token_metadata = {
-						token_id = token_id;
-						token_info = t.token_info;
-					} in
+				let token_id = art.token_start_id + t.edition in
+				let new_token_metadata = {
+					token_id = token_id;
+					token_info = t.token_info;
+				} in
 
-					let _ = fail_if_duplicated_token_id(token_id, storage.token_metadata) in
+				let _ = fail_if_duplicated_token_id(token_id, storage.token_metadata) in
 
-					let new_metadata = Big_map.add token_id new_token_metadata storage.token_metadata in
-					let new_ledger = Big_map.add token_id owner storage.ledger in
-					{
-						token_metadata = new_metadata;
-						ledger = new_ledger;
-					}
+				let new_metadata = Big_map.add token_id new_token_metadata storage.token_metadata in
+				let new_ledger = Big_map.add token_id owner storage.ledger in
+				{
+					token_metadata = new_metadata;
+					ledger = new_ledger;
+				}
 	in
 
 	List.fold (fun (storage, m : mint_storage * mint_edition_param) ->
