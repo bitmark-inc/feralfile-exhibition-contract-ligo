@@ -6,7 +6,7 @@
 #include "./ff_minter.mligo"
 #include "./ff_custom_token.mligo"
 
-type asset_storage = 
+type asset_storage =
 {
   assets : token_storage;
   admin : admin_storage;
@@ -20,15 +20,16 @@ type asset_storage =
 
 type asset_entrypoints =
   | Assets of fa2_entry_points
-  | FFAssets of ff_entry_points
   | Admin of admin_entrypoints
   | Minter of minter_entrypoints
+  | Authorized_transfer of authorized_transfer list
 
 [@inline]
 let fail_if_not_trustee (storage : asset_storage) : unit =
-  if Tezos.sender <> storage.trustee 
+  if Tezos.sender <> storage.trustee
   then
-    let _ = fail_if_not_admin storage.admin in unit
+    let _ = fail_if_not_admin storage.admin in
+    unit
   else unit
 
 let main (param, storage : asset_entrypoints * asset_storage)
@@ -37,12 +38,6 @@ let main (param, storage : asset_entrypoints * asset_storage)
   | Assets a ->
     let _ = fail_if_paused storage.admin in
     let ops, new_assets = fa2_main (a, storage.assets) in
-    let new_s = { storage with assets = new_assets; } in
-    (ops, new_s)
-
-  | FFAssets a ->
-    let _ = fail_if_not_trustee storage in
-    let ops, new_assets = ff_main (a, storage.assets, storage.signature_prefix) in
     let new_s = { storage with assets = new_assets; } in
     (ops, new_s)
 
@@ -57,6 +52,12 @@ let main (param, storage : asset_entrypoints * asset_storage)
     let new_assets, new_minter, new_artworks = minter_main (m, storage.assets, storage.minter, storage.artworks, storage.bytes_nat_convert_map) in
     let new_s = { storage with assets = new_assets; minter = new_minter; artworks = new_artworks; } in
     ([] : operation list) , new_s
+
+  | Authorized_transfer transfers ->
+    let _ = fail_if_not_trustee storage in
+    let new_assets = authorized_transfer (transfers, storage.assets) in
+    let new_s = { storage with assets = new_assets; } in
+    ([] : operation list), new_s
 
 let default_storage: asset_storage = {
   assets= ({

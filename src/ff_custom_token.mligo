@@ -1,4 +1,4 @@
-type authorized_transfers_destination =
+type authorized_transfer_destination =
 [@layout:comb]
 {
   to_ : address;
@@ -7,13 +7,13 @@ type authorized_transfers_destination =
   sig : signature;
 }
 
-type authorized_transfers =
+type authorized_transfer =
 [@layout:comb]
 {
   from_ : address;
   pk : key;
   expiry : timestamp;
-  txs : authorized_transfers_destination list;
+  txs : authorized_transfer_destination list;
 }
 
 let fail_if_key_mismatch (key, from : key * address) : unit =
@@ -32,19 +32,16 @@ let fail_if_invalid_signature (k, sig, msg : key * signature * bytes) : unit =
     then failwith fa2_invalid_signature  
   else unit
 
-type ff_entry_points =
-  | Never of never
-  | Authorized_transfers of authorized_transfers list
+let sig_prefix = 0x54657a6f73205369676e6564204d6573736167653a
 
-let authorized_transfers (txs, ledger, sig_prefix
-    : (authorized_transfers list) * ledger * bytes) : ledger =
+let _authorized_transfer (transfers, ledger : authorized_transfer list * ledger) : ledger =
   (* process individual transfer *)
-  let make_admin_transfer = (fun (l, tx : ledger * authorized_transfers) ->
+  let make_admin_transfer = (fun (l, tx : ledger * authorized_transfer) ->
     let _ = fail_if_key_mismatch(tx.pk, tx.from_) in
     let _ = fail_if_expired tx.expiry in
     let p_bytes_expiry = Bytes.pack tx.expiry in
     List.fold 
-      (fun (ll, dst : ledger * authorized_transfers_destination) ->
+      (fun (ll, dst : ledger * authorized_transfer_destination) ->
         if dst.amount = 0n
           then ll
         else if dst.amount <> 1n
@@ -53,7 +50,7 @@ let authorized_transfers (txs, ledger, sig_prefix
           let owner = Big_map.find_opt dst.token_id ll in
           match owner with
           | None -> (failwith fa2_token_undefined : ledger)
-          | Some o -> 
+          | Some o ->
             if o <> tx.from_
               then (failwith fa2_insufficient_balance : ledger)
             else 
@@ -65,14 +62,12 @@ let authorized_transfers (txs, ledger, sig_prefix
               Big_map.update dst.token_id (Some dst.to_) ll
       ) tx.txs l
   )
-  in 
-  List.fold make_admin_transfer txs ledger
+  in
+  List.fold make_admin_transfer transfers ledger
 
-let ff_main (param, storage, sig_prefix : ff_entry_points * token_storage * bytes)
-    : (operation  list) * token_storage =
-  match param with
-  | Never _ -> (failwith "INVALID_INVOCATION" : (operation  list) * token_storage) 
-  | Authorized_transfers txs -> 
-    let new_ledger = authorized_transfers (txs, storage.ledger, sig_prefix) in
-    let new_storage = { storage with ledger = new_ledger; } in
-    ([] : operation list), new_storage
+(** authorized_transfer takes authorized transfer requests from users
+    and executes them from the trustee account *)
+let authorized_transfer (transfers, token_storage : authorized_transfer list * token_storage) : token_storage =
+    let new_ledger = _authorized_transfer (transfers, token_storage.ledger) in
+    let new_storage = { token_storage with ledger = new_ledger; } in
+    new_storage
