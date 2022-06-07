@@ -15,7 +15,6 @@ type asset_storage =
   metadata : contract_metadata;
   trustee : address;
   bytes_nat_convert_map : bytes_nat_convert_map;
-  signature_prefix: bytes;
 }
 
 type asset_entrypoints =
@@ -77,7 +76,6 @@ let default_storage: asset_storage = {
     ("content", 0x00) (* bytes encoded UTF-8 JSON *)
   ];
   trustee = ("tz1Z7o6TDzBGzKerNMQndWEpVui1MCvRfN9A" : address);
-  signature_prefix = 0x54657a6f73205369676e6564204d6573736167653a;
   bytes_nat_convert_map = (Map.literal [
     (0x00, 0n); (0x01, 1n);
     (0x02, 2n); (0x03, 3n);
