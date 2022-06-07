@@ -71,7 +71,7 @@ const auth_transfer = async function () {
 
         const sts = await noXTZSigner.sign(buf2hex(Buffer.from(result_msg)))
 
-        let op2 = await contract.methods.authorized_transfers(
+        let op2 = await contract.methods.authorized_transfer(
             [
                 {
                     from_: noXTZAddr,
