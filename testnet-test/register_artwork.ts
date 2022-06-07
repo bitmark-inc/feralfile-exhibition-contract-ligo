@@ -12,7 +12,7 @@ dotenv.config();
 
 const Tezos = new TezosToolkit(<string>process.env.TEZOS_RPC_URL);
 
-const mint = async function () {
+const register_art = async function () {
   const adminSigner = await InMemorySigner.fromSecretKey(<string>process.env.DEPLOYER_PRIVATE_KEY);
   Tezos.setProvider({
     signer: adminSigner
@@ -23,8 +23,7 @@ const mint = async function () {
   try {
     let op = await contract.methods.register_artworks([{
       artist_name: "BRDN-test",
-      edition_size: 10,
-      fingerprint: "IamFingerprint",
+      fingerprint: Uint8Array.from(Buffer.from("IamFingerprint")),
       title: "test",
       max_edition: 10
     }]).send();
@@ -35,4 +34,4 @@ const mint = async function () {
   }
 }
 
-mint()
+register_art()

@@ -18,7 +18,7 @@ type artwork_param =
 {
   title : string;
   artist_name : string;
-  fingerprint : string;
+  fingerprint : bytes;
   max_edition : nat;
 }
 
@@ -75,10 +75,8 @@ register_artworks creates artworks for an exhibition
 *)
 let register_artworks(param, artworks, convet_map : artwork_param list * artwork_storage * bytes_nat_convert_map) : artwork_storage =
 	let register = (fun (artworks, artwork_param : artwork_storage * artwork_param) ->
-		let packed_fingerprint = Bytes.pack artwork_param.fingerprint in
-
 		(** Generate artwork_id using keccak256 algorithm *)
-		let artwork_id = Crypto.keccak packed_fingerprint in
+		let artwork_id = Crypto.keccak artwork_param.fingerprint in
 		if Map.mem artwork_id artworks then (failwith "USED_ARTWORK_ID" : artwork_storage)
 		else
 			let artwork_id_nat = bytes_to_nat(convet_map, artwork_id, 0n, 0n) in

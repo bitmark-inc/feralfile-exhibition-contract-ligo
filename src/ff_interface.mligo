@@ -5,7 +5,7 @@ type artwork =
 {
   title : string;
   artist_name : string;
-  fingerprint : string;
+  fingerprint : bytes;
   max_edition: nat;
   token_start_id : nat;
 }
@@ -28,3 +28,7 @@ type ff_token_metadata =
   artwork_id: bytes;
   edition: nat;
 }
+
+let fa2_invalid_signature = "FA2_INVALID_SIGNATURE"
+let fa2_publickey_address_mismatch = "FA2_PUBLICKEY_ADDRESS_MISMATCH"
+let fa2_expired_timestamp = "FA2_EXPIRED_TIMESTAMP"
