@@ -4,8 +4,6 @@
 
 #include "./ff_interface.mligo"
 
-type minter_storage = unit
-
 type ff_token_metadata =
 [@layout:comb]
 {
