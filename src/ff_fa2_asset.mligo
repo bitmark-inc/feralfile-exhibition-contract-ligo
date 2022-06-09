@@ -10,7 +10,6 @@ type asset_storage =
 {
   assets : token_storage;
   admin : admin_storage;
-  minter : minter_storage;
   artworks: artwork_storage;
   metadata : contract_metadata;
   trustee : address;
@@ -47,8 +46,8 @@ let main (param, storage : asset_entrypoints * asset_storage)
   | Minter m ->
     let _ = fail_if_paused storage.admin in
     let _ = fail_if_not_trustee storage in
-    let new_assets, new_minter, new_artworks = minter_main (m, storage.assets, storage.minter, storage.artworks) in
-    let new_s = { storage with assets = new_assets; minter = new_minter; artworks = new_artworks; } in
+    let new_assets, new_artworks = minter_main (m, storage.assets, storage.artworks) in
+    let new_s = { storage with assets = new_assets; artworks = new_artworks; } in
     ([] : operation list) , new_s
 
   | Authorized_transfer transfers ->
@@ -68,7 +67,6 @@ let default_storage: asset_storage = {
     pending_admin = (None : address option);
     paused = false;
   };
-  minter = ();
   artworks = (Map.empty : artwork_storage);
   metadata = Big_map.literal [
     ("", Bytes.pack "tezos-storage:content" );
