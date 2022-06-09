@@ -4,14 +4,18 @@ default: clean compile compile-storage
 
 ARCH=$(shell /usr/bin/uname -m)
 PWD=$(shell pwd)
-LIGO=docker run --rm -v ${PWD}:${PWD} -w ${PWD} ligolang/ligo:0.40.0
+LIGO=docker run --rm -v ${PWD}:${PWD} -w ${PWD} ligolang/ligo:0.43.0
 
 clean:
 	rm -rf ./compilation
 	mkdir ./compilation
 
+compile-consts:
+	${LIGO} compile constant cameligo "bytes_to_nat" --format json --init-file src/global_constants/bytes_to_nat.mligo > src/global_constants/bytes_to_nat.json
+	jq -r '[.text_code]' src/global_constants/bytes_to_nat.json > src/global_constants/bytes_to_nat_array.json
+
 compile:
-	${LIGO} compile contract src/ff_fa2_asset.mligo -o compilation/contract.tz
+	${LIGO} compile contract src/ff_fa2_asset.mligo -o compilation/contract.tz --file-constants src/global_constants/bytes_to_nat_array.json
 
 compile-storage:
 	${LIGO} compile storage src/ff_fa2_asset.mligo 'default_storage' -o compilation/storage.tz
@@ -31,6 +35,10 @@ tc-deploy: compile compile-storage
 	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes tezos-client originate contract FFExhibition transferring 0 from default \
 	running ./compilation/contract.tz --burn-cap 15 --init '$(shell cat ./compilation/storage.tz)'
 	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes tezos-client forget all contracts --force
+
+# This command failed if it has already registered
+tc-deploy-consts: compile-consts
+	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes tezos-client register global constant '$(shell jq -r .text_code src/global_constants/bytes_to_nat.json)' from default
 
 test-register-artwork:
 	TEZOS_RPC_URL=$(shell jq -r .shell .env.json) \
