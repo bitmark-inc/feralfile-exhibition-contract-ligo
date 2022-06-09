@@ -86,27 +86,16 @@ let mint_editions(param, storage, artworks : mint_edition_param list * mint_stor
 		List.fold (mint_tokens_for_owner m.owner) m.tokens storage
 	) param storage
 
-let rec bytes_to_nat(convet_map, target, index, result : bytes_nat_convert_map * bytes * nat * nat) : nat =
-	if Bytes.length target = 0n then (failwith "BYTES_LENGTH_ZERO" : nat)
-	else if index < Bytes.length target then
-		let byte = Bytes.sub index 1n target in
-		match Map.find_opt byte convet_map with
-			| None -> (failwith "UNDEFINED_BYTES_IN_MAP" : nat)
-			| Some n ->
-				bytes_to_nat(convet_map, target, index+1n, result * 256n + n)
-	else
-		result
-
 (**
 register_artworks creates artworks for an exhibition
 *)
-let register_artworks(param, artworks, convet_map : artwork_param list * artwork_storage * bytes_nat_convert_map) : artwork_storage =
+let register_artworks(param, artworks : artwork_param list * artwork_storage) : artwork_storage =
 	let register = (fun (artworks, artwork_param : artwork_storage * artwork_param) ->
 		(** Generate artwork_id using keccak256 algorithm *)
 		let artwork_id = Crypto.keccak artwork_param.fingerprint in
 		if Map.mem artwork_id artworks then (failwith "USED_ARTWORK_ID" : artwork_storage)
 		else
-			let artwork_id_nat = bytes_to_nat(convet_map, artwork_id, 0n, 0n) in
+			let artwork_id_nat = (Tezos.constant "exprtqrC8jBxHAW1QMnPwZjarLpRj2ZLyK9stUhwtavoGPoR4BwHpz" : (bytes * nat * nat) -> nat)(artwork_id, 0n, 0n) in
 			let new_artwork = {
 				artist_name = artwork_param.artist_name;
 				fingerprint = artwork_param.fingerprint;
@@ -118,8 +107,8 @@ let register_artworks(param, artworks, convet_map : artwork_param list * artwork
 	) in
 	List.fold register param artworks
 
-let minter_main (param, _tokens, _minter, _artworks, _bytes_nat_convert_map
-	: minter_entrypoints * token_storage * minter_storage * artwork_storage *bytes_nat_convert_map)
+let minter_main (param, _tokens, _minter, _artworks
+	: minter_entrypoints * token_storage * minter_storage * artwork_storage)
 	: token_storage * minter_storage * artwork_storage =
 	match param with
 	| Mint_editions m ->
@@ -134,5 +123,5 @@ let minter_main (param, _tokens, _minter, _artworks, _bytes_nat_convert_map
 		} in
 		new_tokens, _minter, _artworks
 	| Register_artworks a ->
-		let new_artworks = register_artworks (a, _artworks, _bytes_nat_convert_map) in
+		let new_artworks = register_artworks (a, _artworks) in
 		_tokens, _minter, new_artworks

@@ -1,6 +1,7 @@
 .venv
 .env.json
 .vscode
+.DS_Store
 node_modules
 
 compilation
