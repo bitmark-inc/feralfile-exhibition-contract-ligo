@@ -4,8 +4,6 @@
 
 #include "./ff_interface.mligo"
 
-type minter_storage = unit
-
 type ff_token_metadata =
 [@layout:comb]
 {
@@ -107,9 +105,9 @@ let register_artworks(param, artworks : artwork_param list * artwork_storage) : 
 	) in
 	List.fold register param artworks
 
-let minter_main (param, _tokens, _minter, _artworks
-	: minter_entrypoints * token_storage * minter_storage * artwork_storage)
-	: token_storage * minter_storage * artwork_storage =
+let minter_main (param, _tokens, _artworks
+	: minter_entrypoints * token_storage * artwork_storage)
+	: token_storage * artwork_storage =
 	match param with
 	| Mint_editions m ->
 		let mint_in = {
@@ -121,7 +119,7 @@ let minter_main (param, _tokens, _minter, _artworks
 			ledger = mint_out.ledger;
 			token_metadata = mint_out.token_metadata;
 		} in
-		new_tokens, _minter, _artworks
+		new_tokens, _artworks
 	| Register_artworks a ->
 		let new_artworks = register_artworks (a, _artworks) in
-		_tokens, _minter, new_artworks
+		_tokens, new_artworks
