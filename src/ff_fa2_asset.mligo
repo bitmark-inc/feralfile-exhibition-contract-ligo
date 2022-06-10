@@ -1,8 +1,10 @@
 #include "../fa2/fa2/fa2_interface.mligo"
-#include "../fa2/admin/pausable_simple_admin.mligo"
+#include "../fa2/admin/simple_admin.mligo"
 #include "../fa2/token/fa2_nft_token.mligo"
+#include "../fa2/fa2/fa2_errors.mligo"
 
 #include "./ff_interface.mligo"
+
 #include "./ff_minter.mligo"
 #include "./ff_custom_token.mligo"
 #include "./ff_trustee.mligo"
@@ -71,7 +73,6 @@ let default_storage: asset_storage = {
   admin = {
     admin = ("tz1MpyrZzHRy7JjRJzENcEgPcBMjGfXuxhb6" : address);
     pending_admin = (None : address option);
-    paused = false;
   };
   artworks = (Map.empty : artwork_storage);
   metadata = Big_map.literal [
