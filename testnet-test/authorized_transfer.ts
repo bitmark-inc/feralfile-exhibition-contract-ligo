@@ -1,23 +1,15 @@
 import * as dotenv from "dotenv";
 import {
-    TezosOperationError,
     TezosToolkit
-} from "@taquito/taquito";
-import {
-    MichelsonMap
 } from "@taquito/taquito";
 import {
     InMemorySigner
 } from "@taquito/signer";
 import {
-    hex2buf,
     buf2hex
 } from "@taquito/utils";
 import {
-    packData,
-    packDataBytes,
-    MichelsonData,
-    MichelsonType
+    packData
 } from "@taquito/michel-codec";
 
 dotenv.config();

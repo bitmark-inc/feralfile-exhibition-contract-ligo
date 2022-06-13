@@ -13,6 +13,13 @@ type mint_edition_param =
 	tokens : ff_token_metadata list;
 }
 
+type burn_edition_param =
+[@layout:comb]
+{
+  owner : address;
+  tokens : token_id list;
+}
+
 type artwork_param =
 [@layout:comb]
 {
@@ -24,6 +31,7 @@ type artwork_param =
 
 let ff_mint_invalid_edition = "EDITION_NUMBER_EXCEEDS_MAX_EDITION_LIMITS"
 let ff_mint_duplicated_token_id = "TOKEN_HAS_ALREADY_ISSUED"
+let ff_token_metadata_not_found = "TOKEN_METADATA_NOT_FOUND"
 
 (** check if the token edition exceed the maximum number of the artwork *)
 let fail_if_invalid_edition (edition, artwork : nat * artwork) : unit =
@@ -37,13 +45,20 @@ let fail_if_duplicated_token_id (token_id, metadata : nat * token_metadata_stora
     then failwith ff_mint_duplicated_token_id
   else unit
 
+(** check if a token metadata is found *)
+let fail_if_token_metadata_not_found (token_id, metadata : nat * token_metadata_storage) : unit =
+  if not Big_map.mem token_id metadata
+    then failwith ff_token_metadata_not_found
+  else unit
+
 type issue_artworks_editions_param = nat list
 
 type minter_entrypoints =
+	| Burn_editions of burn_edition_param list
 	| Mint_editions of mint_edition_param list
 	| Register_artworks of artwork_param list
 
-type mint_storage = {
+type minter_storage = {
 	token_metadata : token_metadata_storage;
 	ledger : ledger;
 }
@@ -51,10 +66,10 @@ type mint_storage = {
 (**
 mint_editions mint editions for the exhibition
 *)
-let mint_editions(param, storage, artworks : mint_edition_param list * mint_storage * artwork_storage) : mint_storage =
-	let mint_tokens_for_owner (owner: address) (storage, t : mint_storage * ff_token_metadata) =
+let mint_editions(param, storage, artworks : mint_edition_param list * minter_storage * artwork_storage) : minter_storage =
+	let mint_tokens_for_owner (owner: address) (storage, t : minter_storage * ff_token_metadata) =
 		match Map.find_opt t.artwork_id artworks with
-			| None -> (failwith "ARTWORK_NOT_FOUND" : mint_storage)
+			| None -> (failwith "ARTWORK_NOT_FOUND" : minter_storage)
 			| Some art ->
 				let _ = fail_if_invalid_edition(t.edition, art) in
 
@@ -66,15 +81,13 @@ let mint_editions(param, storage, artworks : mint_edition_param list * mint_stor
 
 				let _ = fail_if_duplicated_token_id(token_id, storage.token_metadata) in
 
-				let new_metadata = Big_map.add token_id new_token_metadata storage.token_metadata in
-				let new_ledger = Big_map.add token_id owner storage.ledger in
 				{
-					token_metadata = new_metadata;
-					ledger = new_ledger;
+					token_metadata = Big_map.add token_id new_token_metadata storage.token_metadata;
+					ledger = Big_map.add token_id owner storage.ledger;
 				}
 	in
 
-	List.fold (fun (storage, m : mint_storage * mint_edition_param) ->
+	List.fold (fun (storage, m : minter_storage * mint_edition_param) ->
 		List.fold (mint_tokens_for_owner m.owner) m.tokens storage
 	) param storage
 
@@ -99,6 +112,25 @@ let register_artworks(param, artworks : artwork_param list * artwork_storage) : 
 	) in
 	List.fold register param artworks
 
+let burn_editions(param, storage : burn_edition_param list * minter_storage) : minter_storage =
+  	let burn_tokens_for_owner (owner: address) (storage, tid : minter_storage * token_id) =
+	  	let _ = fail_if_token_metadata_not_found (tid, storage.token_metadata) in
+		match Big_map.find_opt tid storage.ledger with
+    		| None -> (failwith fa2_token_undefined : minter_storage)
+    		| Some o ->
+				if o <> owner
+					then (failwith fa2_not_owner : minter_storage)
+				else 
+					{
+						token_metadata = Big_map.remove tid storage.token_metadata;
+						ledger = Big_map.remove tid storage.ledger;
+					}
+    in
+
+	List.fold (fun (storage, b : minter_storage * burn_edition_param) ->
+		List.fold (burn_tokens_for_owner b.owner) b.tokens storage
+	) param storage
+
 let minter_main (param, _tokens, _artworks
 	: minter_entrypoints * token_storage * artwork_storage)
 	: token_storage * artwork_storage =
@@ -112,6 +144,17 @@ let minter_main (param, _tokens, _artworks
 		let new_tokens = { _tokens with
 			ledger = mint_out.ledger;
 			token_metadata = mint_out.token_metadata;
+		} in
+		new_tokens, _artworks
+	| Burn_editions b ->
+		let burn_in = {
+			ledger = _tokens.ledger;
+			token_metadata = _tokens.token_metadata;
+		} in
+		let burn_out = burn_editions (b, burn_in) in
+		let new_tokens = { _tokens with
+			ledger = burn_out.ledger;
+			token_metadata = burn_out.token_metadata;
 		} in
 		new_tokens, _artworks
 	| Register_artworks a ->
