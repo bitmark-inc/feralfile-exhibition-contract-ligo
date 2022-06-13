@@ -4,7 +4,7 @@ type trustee_storage = {
 }
 
 type trustee_entrypoints =
-    | Set_trustee of address
+    | Add_trustee of address
     | Remove_trustee of address
 
 let ff_over_max_trustee_amount = "FF_OVER_MAX_TRUSTEE_AMOUNT"
@@ -31,7 +31,7 @@ let fail_if_not_trustee (trustee, storage : address * trustee_storage) : unit =
         then failwith ff_not_trustee
     else unit
 
-let set_trustee(new_trustee, storage : address * trustee_storage) : trustee_storage = 
+let add_trustee(new_trustee, storage : address * trustee_storage) : trustee_storage = 
     let _ = fail_if_over_max_trustee_amount storage in
     let _ = fail_if_trustee_already_exist (new_trustee, storage) in
      { storage with trustees =  Set.add new_trustee storage.trustees; }
@@ -43,7 +43,7 @@ let remove_trustee(old_trustee, storage : address * trustee_storage) : trustee_s
 let trustee_main(param, storage : trustee_entrypoints * trustee_storage)
     : trustee_storage =
     match param with
-    | Set_trustee new_trustee ->
-        set_trustee (new_trustee, storage)
+    | Add_trustee new_trustee ->
+        add_trustee (new_trustee, storage)
     | Remove_trustee old_trustee ->
         remove_trustee (old_trustee, storage)

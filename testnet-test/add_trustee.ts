@@ -12,7 +12,7 @@ dotenv.config();
 
 const Tezos = new TezosToolkit(<string>process.env.TEZOS_RPC_URL);
 
-const set_trustee = async function () {
+const add_trustee = async function () {
     const adminSigner = await InMemorySigner.fromSecretKey(<string>process.env.DEPLOYER_PRIVATE_KEY);
     Tezos.setProvider({
         signer: adminSigner
@@ -21,7 +21,7 @@ const set_trustee = async function () {
     const contract = await Tezos.wallet.at(<string>process.env.CONTRACT_ADDRESS);
 
     try {
-        let op = await contract.methods.set_trustee(
+        let op = await contract.methods.add_trustee(
             "tz2Vp4nbnLhNs8fi2vCjocHgv2FFqR3zK4y6"
         ).send();
         await op.confirmation()
@@ -31,4 +31,4 @@ const set_trustee = async function () {
     }
 }
 
-set_trustee()
+add_trustee()
