@@ -13,7 +13,12 @@ type mint_edition_param =
   tokens : ff_token_metadata list;
 }
 
-type update_edition_metadata_param = token_metadata
+type burn_edition_param =
+[@layout:comb]
+{
+  owner : address;
+  tokens : token_id list;
+}
 
 type artwork_param =
 [@layout:comb]
@@ -24,11 +29,13 @@ type artwork_param =
   max_edition : nat;
 }
 
+type update_edition_metadata_param = token_metadata
 type issue_artworks_editions_param = nat list
 
 type minter_entrypoints =
   | Mint_editions of mint_edition_param list
   | Update_edition_metadata of update_edition_metadata_param list
+  | Burn_editions of burn_edition_param list
   | Register_artworks of artwork_param list
 
 type minter_storage = {
@@ -132,6 +139,25 @@ let update_edition_metadata(param, token_metadata : update_edition_metadata_para
   ) in
   List.fold update param token_metadata
 
+let burn_editions(param, storage : burn_edition_param list * minter_storage) : minter_storage =
+  	let burn_tokens_for_owner (owner: address) (storage, tid : minter_storage * token_id) =
+	  	let _ = fail_if_token_metadata_not_found (tid, storage.token_metadata) in
+		match Big_map.find_opt tid storage.ledger with
+    		| None -> (failwith fa2_token_undefined : minter_storage)
+    		| Some o ->
+				if o <> owner
+					then (failwith fa2_not_owner : minter_storage)
+				else 
+					{
+						token_metadata = Big_map.remove tid storage.token_metadata;
+						ledger = Big_map.remove tid storage.ledger;
+					}
+    in
+
+	List.fold (fun (storage, b : minter_storage * burn_edition_param) ->
+		List.fold (burn_tokens_for_owner b.owner) b.tokens storage
+	) param storage
+
 let minter_main (param, _tokens, _artworks
   : minter_entrypoints * token_storage * artwork_storage)
   : token_storage * artwork_storage =
@@ -153,6 +179,17 @@ let minter_main (param, _tokens, _artworks
       token_metadata = updated_metadata;
     } in
     new_tokens, _artworks
+	| Burn_editions b ->
+		let burn_in = {
+			ledger = _tokens.ledger;
+			token_metadata = _tokens.token_metadata;
+		} in
+		let burn_out = burn_editions (b, burn_in) in
+		let new_tokens = { _tokens with
+			ledger = burn_out.ledger;
+			token_metadata = burn_out.token_metadata;
+		} in
+		new_tokens, _artworks
   | Register_artworks a ->
     let new_artworks = register_artworks (a, _artworks) in
     _tokens, new_artworks
