@@ -7,6 +7,8 @@
     "test-register-artwork": "ts-node testnet-test/register_artwork.ts",
     "test-mint-editions": "ts-node testnet-test/mint_editions.ts",
     "test-authorized-transfer": "ts-node testnet-test/authorized_transfer.ts",
+    "test-add-trustee": "ts-node testnet-test/add_trustee.ts",
+    "test-remove-trustee": "ts-node testnet-test/remove_trustee.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

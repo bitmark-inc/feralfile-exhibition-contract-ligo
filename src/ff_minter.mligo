@@ -1,9 +1,3 @@
-#include "../fa2/fa2/fa2_interface.mligo"
-#include "../fa2/fa2/fa2_errors.mligo"
-#include "../fa2/token/fa2_nft_token.mligo"
-
-#include "./ff_interface.mligo"
-
 type ff_token_metadata =
 [@layout:comb]
 {
