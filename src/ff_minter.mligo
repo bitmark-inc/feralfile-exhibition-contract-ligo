@@ -87,7 +87,7 @@ let register_artworks(param, artworks : artwork_param list * artwork_storage) : 
 		let artwork_id = Crypto.keccak artwork_param.fingerprint in
 		if Map.mem artwork_id artworks then (failwith "USED_ARTWORK_ID" : artwork_storage)
 		else
-			let artwork_id_nat = (Tezos.constant "exprtqrC8jBxHAW1QMnPwZjarLpRj2ZLyK9stUhwtavoGPoR4BwHpz" : (bytes * nat * nat) -> nat)(artwork_id, 0n, 0n) in
+			let artwork_id_nat = (Tezos.constant "exprutNrs68aNmrp3DSif5U7Usq2e8f5ZH9xbDekcKdEErYPv11brk" : (bytes * nat * nat) -> nat)(artwork_id, 0n, 0n) in
 			let new_artwork = {
 				artist_name = artwork_param.artist_name;
 				fingerprint = artwork_param.fingerprint;

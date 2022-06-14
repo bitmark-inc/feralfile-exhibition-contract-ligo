@@ -18,7 +18,7 @@ compile:
 	${LIGO} compile contract src/ff_fa2_asset.mligo -o compilation/contract.tz --file-constants src/global_constants/bytes_to_nat_array.json
 
 compile-storage:
-	${LIGO} compile storage src/ff_fa2_asset.mligo 'default_storage' -o compilation/storage.tz
+	${LIGO} compile storage src/ff_fa2_asset.mligo 'default_storage' -o compilation/storage.tz --file-constants src/global_constants/bytes_to_nat_array.json
 
 deploy:
 	./tools/with_venv.sh python ./tools/originate.py
@@ -38,7 +38,7 @@ tc-deploy: compile compile-storage
 
 # This command failed if it has already registered
 tc-deploy-consts: compile-consts
-	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes tezos-client register global constant '$(shell jq -r .text_code src/global_constants/bytes_to_nat.json)' from default
+	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes tezos-client register global constant '$(shell jq -r .text_code src/global_constants/bytes_to_nat.json)' from default --burn-cap 2
 
 test-register-artwork:
 	TEZOS_RPC_URL=$(shell jq -r .shell .env.json) \
