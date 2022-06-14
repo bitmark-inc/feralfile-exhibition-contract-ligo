@@ -3,11 +3,11 @@ Feral File exhibition artwork structure
 *)
 type artwork =
 {
-  title : string;
-  artist_name : string;
-  fingerprint : bytes;
-  max_edition: nat;
-  token_start_id : nat;
+	title : string;
+	artist_name : string;
+	fingerprint : bytes;
+	max_edition: nat;
+	token_start_id : nat;
 }
 
 (**

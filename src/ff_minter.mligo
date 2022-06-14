@@ -1,9 +1,9 @@
 type ff_token_metadata =
 [@layout:comb]
 {
-  token_info: (string, bytes) map;
-  artwork_id: bytes;
-  edition: nat;
+	token_info: (string, bytes) map;
+	artwork_id: bytes;
+	edition: nat;
 }
 
 type mint_edition_param =
@@ -16,17 +16,17 @@ type mint_edition_param =
 type burn_edition_param =
 [@layout:comb]
 {
-  owner : address;
-  tokens : token_id list;
+	owner : address;
+	tokens : token_id list;
 }
 
 type artwork_param =
 [@layout:comb]
 {
-  title : string;
-  artist_name : string;
-  fingerprint : bytes;
-  max_edition : nat;
+	title : string;
+	artist_name : string;
+	fingerprint : bytes;
+	max_edition : nat;
 }
 
 let ff_mint_invalid_edition = "EDITION_NUMBER_EXCEEDS_MAX_EDITION_LIMITS"
@@ -35,21 +35,21 @@ let ff_token_metadata_not_found = "TOKEN_METADATA_NOT_FOUND"
 
 (** check if the token edition exceed the maximum number of the artwork *)
 let fail_if_invalid_edition (edition, artwork : nat * artwork) : unit =
-  if edition > artwork.max_edition
-    then failwith ff_mint_invalid_edition
-  else unit
+	if edition > artwork.max_edition
+		then failwith ff_mint_invalid_edition
+	else unit
 
 (** check if a token is minted *)
 let fail_if_duplicated_token_id (token_id, metadata : nat * token_metadata_storage) : unit =
-  if Big_map.mem token_id metadata
-    then failwith ff_mint_duplicated_token_id
-  else unit
+	if Big_map.mem token_id metadata
+		then failwith ff_mint_duplicated_token_id
+	else unit
 
 (** check if a token metadata is found *)
 let fail_if_token_metadata_not_found (token_id, metadata : nat * token_metadata_storage) : unit =
-  if not Big_map.mem token_id metadata
-    then failwith ff_token_metadata_not_found
-  else unit
+	if not Big_map.mem token_id metadata
+		then failwith ff_token_metadata_not_found
+	else unit
 
 type issue_artworks_editions_param = nat list
 
@@ -69,22 +69,22 @@ mint_editions mint editions for the exhibition
 let mint_editions(param, storage, artworks : mint_edition_param list * minter_storage * artwork_storage) : minter_storage =
 	let mint_tokens_for_owner (owner: address) (storage, t : minter_storage * ff_token_metadata) =
 		match Map.find_opt t.artwork_id artworks with
-			| None -> (failwith "ARTWORK_NOT_FOUND" : minter_storage)
-			| Some art ->
-				let _ = fail_if_invalid_edition(t.edition, art) in
+		| None -> (failwith "ARTWORK_NOT_FOUND" : minter_storage)
+		| Some art ->
+			let _ = fail_if_invalid_edition(t.edition, art) in
 
-				let token_id = art.token_start_id + t.edition in
-				let new_token_metadata = {
-					token_id = token_id;
-					token_info = t.token_info;
-				} in
+			let token_id = art.token_start_id + t.edition in
+			let new_token_metadata = {
+				token_id = token_id;
+				token_info = t.token_info;
+			} in
 
-				let _ = fail_if_duplicated_token_id(token_id, storage.token_metadata) in
+			let _ = fail_if_duplicated_token_id(token_id, storage.token_metadata) in
 
-				{
-					token_metadata = Big_map.add token_id new_token_metadata storage.token_metadata;
-					ledger = Big_map.add token_id owner storage.ledger;
-				}
+			{
+				token_metadata = Big_map.add token_id new_token_metadata storage.token_metadata;
+				ledger = Big_map.add token_id owner storage.ledger;
+			}
 	in
 
 	List.fold (fun (storage, m : minter_storage * mint_edition_param) ->
@@ -116,16 +116,15 @@ let burn_editions(param, storage : burn_edition_param list * minter_storage) : m
   	let burn_tokens_for_owner (owner: address) (storage, tid : minter_storage * token_id) =
 	  	let _ = fail_if_token_metadata_not_found (tid, storage.token_metadata) in
 		match Big_map.find_opt tid storage.ledger with
-    		| None -> (failwith fa2_token_undefined : minter_storage)
-    		| Some o ->
-				if o <> owner
-					then (failwith fa2_not_owner : minter_storage)
-				else 
-					{
-						token_metadata = Big_map.remove tid storage.token_metadata;
-						ledger = Big_map.remove tid storage.ledger;
-					}
-    in
+		| None -> (failwith fa2_token_undefined : minter_storage)
+		| Some o ->
+			if o <> owner then (failwith fa2_not_owner : minter_storage)
+			else 
+				{
+					token_metadata = Big_map.remove tid storage.token_metadata;
+					ledger = Big_map.remove tid storage.ledger;
+				}
+	in
 
 	List.fold (fun (storage, b : minter_storage * burn_edition_param) ->
 		List.fold (burn_tokens_for_owner b.owner) b.tokens storage
