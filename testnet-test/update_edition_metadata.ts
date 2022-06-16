@@ -12,14 +12,13 @@ dotenv.config();
 
 const Tezos = new TezosToolkit(<string>process.env.TEZOS_RPC_URL);
 
-const update_edition_info = async function () {
+const update_edition_metadata = async function () {
     const adminSigner = await InMemorySigner.fromSecretKey(<string>process.env.DEPLOYER_PRIVATE_KEY);
     Tezos.setProvider({
         signer: adminSigner
     });
 
     const contract = await Tezos.wallet.at(<string>process.env.CONTRACT_ADDRESS);
-    const adminAddr = await adminSigner.publicKeyHash()
     const tokenID = <string>process.env.TEST_TOKEN_ID
 
     // use ipfs metadata
@@ -28,7 +27,7 @@ const update_edition_info = async function () {
     })
 
     try {
-        let op = await contract.methods.update_edition_info(
+        let op = await contract.methods.update_edition_metadata(
             [
                 {
                     token_id: tokenID,
@@ -42,4 +41,4 @@ const update_edition_info = async function () {
     }
 }
 
-update_edition_info()
+update_edition_metadata()

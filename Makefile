@@ -52,12 +52,12 @@ test-mint-editions:
 	CONTRACT_ADDRESS=$(shell jq -r .contract .env.json) \
 	npm run test-mint-editions
 
-test-update-edition-info:
+test-update-edition-metadata:
 	TEZOS_RPC_URL=$(shell jq -r .shell .env.json) \
 	DEPLOYER_PRIVATE_KEY=$(shell jq -r .key .env.json) \
 	CONTRACT_ADDRESS=$(shell jq -r .contract .env.json) \
 	TEST_TOKEN_ID=$(shell jq -r .testTokenID .env.json) \
-	npm run test-update-edition-info
+	npm run test-update-edition-metadata
 
 test-authorized-transfer:
 	TEZOS_RPC_URL=$(shell jq -r .shell .env.json) \
@@ -79,7 +79,7 @@ test-remove-trustee:
 	CONTRACT_ADDRESS=$(shell jq -r .contract .env.json) \
 	npm run test-remove-trustee
 
-test-contract: test-register-artwork test-mint-editions test-update-edition-info test-authorized-transfer test-add-trustee test-remove-trustee
+test-contract: test-register-artwork test-mint-editions test-update-edition-metadata test-authorized-transfer test-add-trustee test-remove-trustee
 
 env:
 	git submodule init

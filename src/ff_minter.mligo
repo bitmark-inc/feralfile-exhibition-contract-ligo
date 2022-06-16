@@ -13,7 +13,7 @@ type mint_edition_param =
 	tokens : ff_token_metadata list;
 }
 
-type update_edition_info_param =
+type update_edition_metadata_param =
 [@layout:comb]
 {
 	token_id: token_id;
@@ -55,7 +55,7 @@ type issue_artworks_editions_param = nat list
 
 type minter_entrypoints =
 	| Mint_editions of mint_edition_param list
-	| Update_edition_info of update_edition_info_param list
+	| Update_edition_metadata of update_edition_metadata_param list
 	| Register_artworks of artwork_param list
 
 type minter_storage = {
@@ -114,8 +114,8 @@ let register_artworks(param, artworks : artwork_param list * artwork_storage) : 
 	) in
 	List.fold register param artworks
 
-let update_edition_info(param, storage : update_edition_info_param list * minter_storage) : minter_storage =
-	let update = (fun (storage, p : minter_storage * update_edition_info_param) ->
+let update_edition_metadata(param, storage : update_edition_metadata_param list * minter_storage) : minter_storage =
+	let update = (fun (storage, p : minter_storage * update_edition_metadata_param) ->
 		let _ = fail_if_token_metadata_not_found (p.token_id, storage.token_metadata) in
 		match Big_map.find_opt p.token_id storage.ledger with
 		| None -> (failwith fa2_token_undefined : minter_storage)
@@ -146,12 +146,12 @@ let minter_main (param, _tokens, _artworks
 			token_metadata = mint_out.token_metadata;
 		} in
 		new_tokens, _artworks
-	| Update_edition_info i ->
+	| Update_edition_metadata i ->
 		let update_edition_in = {
 			ledger = _tokens.ledger;
 			token_metadata = _tokens.token_metadata;
 		} in
-		let update_edition_out = update_edition_info (i, update_edition_in) in
+		let update_edition_out = update_edition_metadata (i, update_edition_in) in
 		let new_tokens = { _tokens with
 			ledger = update_edition_out.ledger;
 			token_metadata = update_edition_out.token_metadata;
