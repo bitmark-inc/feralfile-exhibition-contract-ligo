@@ -13,12 +13,7 @@ type mint_edition_param =
   tokens : ff_token_metadata list;
 }
 
-type update_edition_metadata_param =
-[@layout:comb]
-{
-  token_id: token_id;
-  token_info: (string, bytes) map;
-}
+type update_edition_metadata_param = token_metadata
 
 type artwork_param =
 [@layout:comb]
@@ -123,12 +118,8 @@ let update_edition_metadata(param, storage : update_edition_metadata_param list 
     match Big_map.find_opt p.token_id storage.ledger with
     | None -> (failwith fa2_token_undefined : minter_storage)
     | Some _ ->
-      let new_token_metadata = {
-        token_id = p.token_id;
-        token_info = p.token_info;
-      } in 
       {
-        token_metadata = Big_map.update p.token_id (Some new_token_metadata) storage.token_metadata;
+        token_metadata = Big_map.update p.token_id (Some p) storage.token_metadata;
         ledger = storage.ledger;
       }
   ) in
