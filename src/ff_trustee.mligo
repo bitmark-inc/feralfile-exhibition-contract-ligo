@@ -4,8 +4,8 @@ type trustee_storage = {
 }
 
 type trustee_entrypoints =
-    | Add_trustee of address
-    | Remove_trustee of address
+  | Add_trustee of address
+  | Remove_trustee of address
 
 let ff_over_max_trustee_amount = "FF_OVER_MAX_TRUSTEE_AMOUNT"
 let ff_trustee_already_exist = "FF_TRUSTEE_ALREADY_EXIST"
