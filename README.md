@@ -2,62 +2,40 @@
 
 ## Pre-requisite
 
-- ligo
-- python3
-- virtualenv
-- pytezos
+- [ligo](https://ligolang.org/docs/intro/installation/)
+- [tezos-client](https://wiki.tezos.com/build/clients/installation-and-setup)
+- docker (for mac user)
 
-## Setup Environments
+### ligo on Mac
 
-To set up the local environment, using the following command:
+Since there is no native build of ligo on mac, we leverage docker image to run ligo. You can test the ligo environment by:
 
+```sh
+alias ligo="docker run --rm -v "$PWD":"$PWD" -w "$PWD" ligolang/ligo:0.43.0"
+ligo version -version
 ```
+
+## Setup Environment
+
+To set up the local environment, we first copy `env.json.sample` to `.env.json` and set up the variables properly.
+After that, run the following command:
+
+```sh
 make env
 ```
 
-For some tools that requires further dependencies, we list them below.
-
-### Ligo
-
-We use ligo docker image as the ligo CLI.
-
-```
-$ alias ligo="docker run --rm -v "$PWD":"$PWD" -w "$PWD" ligolang/ligo:0.40.0"
-```
-
-And test the ligo tool,
-
-```
-$ ligo version -version
-```
-
-### Pytezos
-
-For different OS, there are some different requirements.
-
-#### Mac
-
-In mac, you need to install the following dependencies to ensure pytezos can well setup.
-
-```
-$ brew tap cuber/homebrew-libsecp256k1
-$ brew install libsodium libsecp256k1 gmp pkg-config
-```
-
-### Compile
+## Compile
 
 Use `make` to compile the contract code
 
-### Deploy
-
-Copy `env.json.sample` to `.env.jsom` and set up the variables properly.
+## Deploy
 
 Run
 
-```
+```sh
 make deploy
 ```
 
-### Test
+## Test
 
 Work in progress
