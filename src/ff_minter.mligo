@@ -37,8 +37,10 @@ type minter_storage = {
 }
 
 let ff_mint_invalid_edition = "EDITION_NUMBER_EXCEEDS_MAX_EDITION_LIMITS"
-let ff_mint_duplicated_token_id = "TOKEN_HAS_ALREADY_ISSUED"
+let ff_duplicated_token = "TOKEN_HAS_ALREADY_ISSUED"
+let ff_duplicated_token_metadata = "TOKEN_METADATA_HAS_ALREADY_REGISTERED"
 let ff_token_not_found = "TOKEN_NOT_FOUND"
+let ff_token_metadata_not_found = "TOKEN_METADATA_NOT_FOUND"
 
 (** check if the token edition exceed the maximum number of the artwork *)
 let fail_if_invalid_edition (edition, artwork : nat * artwork) : unit =
@@ -46,16 +48,28 @@ let fail_if_invalid_edition (edition, artwork : nat * artwork) : unit =
     then failwith ff_mint_invalid_edition
   else unit
 
-(** check if a token_id is duplicated *)
-let fail_if_duplicated_token_id (token_id, storage : nat * minter_storage) : unit =
-  if Big_map.mem token_id storage.token_metadata || Big_map.mem token_id storage.ledger
-    then failwith ff_mint_duplicated_token_id
+(** check if a token is duplicated *)
+let fail_if_duplicated_token (token_id, ledger : nat * ledger) : unit =
+  if Big_map.mem token_id ledger
+    then failwith ff_duplicated_token
+  else unit
+
+(** check if a token_metadata is duplicated *)
+let fail_if_duplicated_token_metadata (token_id, metadata : nat * token_metadata_storage) : unit =
+  if Big_map.mem token_id metadata
+    then failwith ff_duplicated_token_metadata
   else unit
 
 (** check if a token is not found *)
-let fail_if_token_not_found (token_id, storage : nat * minter_storage) : unit =
-  if not Big_map.mem token_id storage.token_metadata || not Big_map.mem token_id storage.ledger
+let fail_if_token_not_found (token_id, ledger : nat * ledger) : unit =
+  if not Big_map.mem token_id ledger
     then failwith ff_token_not_found
+  else unit
+
+(** check if a token_metadata is not found *)
+let fail_if_token_metadata_not_found (token_id, metadata : nat * token_metadata_storage) : unit =
+  if not Big_map.mem token_id metadata
+    then failwith ff_token_metadata_not_found
   else unit
 
 (**
@@ -69,18 +83,17 @@ let mint_editions(param, storage, artworks : mint_edition_param list * minter_st
         let _ = fail_if_invalid_edition(t.edition, art) in
 
         let token_id = art.token_start_id + t.edition in
+
+        let _ = fail_if_duplicated_token(token_id, storage.ledger) in
+        let _ = fail_if_duplicated_token_metadata(token_id, storage.token_metadata) in
+
         let new_token_metadata = {
           token_id = token_id;
           token_info = t.token_info;
         } in
-
-        let _ = fail_if_duplicated_token_id(token_id, storage) in
-
-        let new_metadata = Big_map.add token_id new_token_metadata storage.token_metadata in
-        let new_ledger = Big_map.add token_id owner storage.ledger in
         {
-          token_metadata = new_metadata;
-          ledger = new_ledger;
+          token_metadata = Big_map.add token_id new_token_metadata storage.token_metadata;
+          ledger = Big_map.add token_id owner storage.ledger;
         }
   in
 
@@ -112,15 +125,12 @@ let register_artworks(param, artworks : artwork_param list * artwork_storage) : 
 (**
 update_edition_metadata update editions' metadata
 *)
-let update_edition_metadata(param, storage : update_edition_metadata_param list * minter_storage) : minter_storage =
-  let update = (fun (storage, p : minter_storage * update_edition_metadata_param) ->
-    let _ = fail_if_token_not_found (p.token_id, storage) in
-    {
-      storage with
-      token_metadata = Big_map.update p.token_id (Some p) storage.token_metadata
-    }
+let update_edition_metadata(param, token_metadata : update_edition_metadata_param list * token_metadata_storage) : token_metadata_storage =
+  let update = (fun (metadata, p : token_metadata_storage * update_edition_metadata_param) ->
+    let _ = fail_if_token_metadata_not_found (p.token_id, metadata) in
+    Big_map.update p.token_id (Some p) metadata
   ) in
-  List.fold update param storage
+  List.fold update param token_metadata
 
 let minter_main (param, _tokens, _artworks
   : minter_entrypoints * token_storage * artwork_storage)
@@ -138,13 +148,9 @@ let minter_main (param, _tokens, _artworks
     } in
     new_tokens, _artworks
   | Update_edition_metadata i ->
-    let update_edition_in = {
-      ledger = _tokens.ledger;
-      token_metadata = _tokens.token_metadata;
-    } in
-    let update_edition_out = update_edition_metadata (i, update_edition_in) in
+    let updated_metadata = update_edition_metadata (i, _tokens.token_metadata) in
     let new_tokens = { _tokens with
-      token_metadata = update_edition_out.token_metadata;
+      token_metadata = updated_metadata;
     } in
     new_tokens, _artworks
   | Register_artworks a ->
