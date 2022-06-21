@@ -1,4 +1,4 @@
-# Tezos Contract Starter Kit
+# Feral File Exhibition Contract Ligo
 
 ## Pre-requisite
 
