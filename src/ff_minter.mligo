@@ -34,6 +34,7 @@ type minter_entrypoints =
 
 type minter_storage = {
   token_metadata : token_metadata_storage;
+  token_attribute : token_attribute_storage;
   ledger : ledger;
 }
 
@@ -92,8 +93,13 @@ let mint_editions(param, storage, artworks : mint_edition_param list * minter_st
           token_id = token_id;
           token_info = t.token_info;
         } in
+        let new_token_attribute = {
+          artwork_id = t.artwork_id;
+          edition_number = t.edition;
+        } in
         {
           token_metadata = Big_map.add token_id new_token_metadata storage.token_metadata;
+          token_attribute = Big_map.add token_id new_token_attribute storage.token_attribute;
           ledger = Big_map.add token_id owner storage.ledger;
         }
   in
@@ -144,43 +150,46 @@ let burn_editions(param, storage : burn_edition_param list * minter_storage) : m
         else 
           {
             token_metadata = Big_map.remove tid storage.token_metadata;
+            token_attribute = Big_map.remove tid storage.token_attribute;
             ledger = Big_map.remove tid storage.ledger;
           }
   ) in
   List.fold burn_tokens_for_owner param storage
 
-let minter_main (param, _tokens, _artworks
-  : minter_entrypoints * token_storage * artwork_storage)
-  : token_storage * artwork_storage =
+let minter_main (param, _tokens, _artworks, _token_attribute
+  : minter_entrypoints * token_storage * artwork_storage * token_attribute_storage)
+  : token_storage * artwork_storage * token_attribute_storage =
   match param with
   | Mint_editions m ->
     let mint_in = {
       ledger = _tokens.ledger;
       token_metadata = _tokens.token_metadata;
+      token_attribute = _token_attribute;
     } in
     let mint_out = mint_editions (m, mint_in, _artworks) in
     let new_tokens = { _tokens with
       ledger = mint_out.ledger;
       token_metadata = mint_out.token_metadata;
     } in
-    new_tokens, _artworks
+    new_tokens, _artworks, mint_out.token_attribute
   | Update_edition_metadata i ->
     let updated_metadata = update_edition_metadata (i, _tokens.token_metadata) in
     let new_tokens = { _tokens with
       token_metadata = updated_metadata;
     } in
-    new_tokens, _artworks
+    new_tokens, _artworks, _token_attribute
   | Burn_editions b ->
     let burn_in = {
       ledger = _tokens.ledger;
       token_metadata = _tokens.token_metadata;
+      token_attribute = _token_attribute;
     } in
     let burn_out = burn_editions (b, burn_in) in
     let new_tokens = { _tokens with
       ledger = burn_out.ledger;
       token_metadata = burn_out.token_metadata;
     } in
-    new_tokens, _artworks
+    new_tokens, _artworks, burn_out.token_attribute
   | Register_artworks a ->
     let new_artworks = register_artworks (a, _artworks) in
-    _tokens, new_artworks
+    _tokens, new_artworks, _token_attribute

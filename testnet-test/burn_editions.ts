@@ -22,12 +22,7 @@ const burn = async function () {
   try {
     let op = await contract.methods.burn_editions(
       [
-        {
-          owner: adminAddr,
-          tokens: [
-            tokenID
-          ]
-        }
+        tokenID,
       ]).send();
     await op.confirmation()
     console.log(op)

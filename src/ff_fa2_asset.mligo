@@ -16,6 +16,7 @@ type asset_storage =
   artworks: artwork_storage;
   metadata : contract_metadata;
   trustee : trustee_storage;
+  token_attribute: token_attribute_storage;
 }
 
 type asset_entrypoints =
@@ -48,8 +49,8 @@ let main (param, storage : asset_entrypoints * asset_storage)
 
   | Minter m ->
     let _ = fail_if_not_authorized_user storage in
-    let new_assets, new_artworks = minter_main (m, storage.assets, storage.artworks) in
-    let new_s = { storage with assets = new_assets; artworks = new_artworks; } in
+    let new_assets, new_artworks, new_token_attribute = minter_main (m, storage.assets, storage.artworks, storage.token_attribute) in
+    let new_s = { storage with assets = new_assets; artworks = new_artworks; token_attribute = new_token_attribute } in
     ([] : operation list) , new_s
 
   | Authorized_transfer transfers ->
@@ -83,4 +84,5 @@ let default_storage: asset_storage = {
     trustees = Set.literal[("tz1Z7o6TDzBGzKerNMQndWEpVui1MCvRfN9A" : address)];
     max_trustee = 2n
   }: trustee_storage);
+  token_attribute = (Big_map.literal[] : token_attribute_storage);
 }
