@@ -2,11 +2,11 @@
 
 default: clean compile-consts compile compile-storage
 
-ARCH=$(shell /usr/bin/uname -m)
+OS=$(shell /usr/bin/uname)
 PWD=$(shell pwd)
 
-
-ifeq (${ARCH}, arm64)
+# Set default ligo CLI to docker image command for macOS
+ifeq (${OS}, Darwin)
 LIGO=docker run --rm -v ${PWD}:${PWD} -w ${PWD} ligolang/ligo:0.43.0
 else
 LIGO=ligo
