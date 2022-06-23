@@ -6,6 +6,7 @@
 #include "./ff_interface.mligo"
 
 #include "./ff_minter.mligo"
+#include "./ff_burner.mligo"
 #include "./ff_custom_token.mligo"
 #include "./ff_trustee.mligo"
 
@@ -17,12 +18,14 @@ type asset_storage =
   metadata : contract_metadata;
   trustee : trustee_storage;
   token_attribute: token_attribute_storage;
+  burnable : bool;
 }
 
 type asset_entrypoints =
   | Assets of fa2_entry_points
   | Admin of admin_entrypoints
   | Minter of minter_entrypoints
+  | Burn_editions of burn_edition_param list
   | Authorized_transfer of authorized_transfer list
   | Trustee of trustee_entrypoints
 
@@ -32,6 +35,12 @@ let fail_if_not_authorized_user (storage : asset_storage) : unit =
   then
     let _ = fail_if_not_admin storage.admin in
     unit
+  else unit
+
+[@inline]
+let fail_if_token_not_burnable (burnable : bool) : unit =
+  if not burnable
+    then failwith ff_token_not_burnable
   else unit
 
 let main (param, storage : asset_entrypoints * asset_storage)
@@ -51,6 +60,12 @@ let main (param, storage : asset_entrypoints * asset_storage)
     let _ = fail_if_not_authorized_user storage in
     let new_assets, new_artworks, new_token_attribute = minter_main (m, storage.assets, storage.artworks, storage.token_attribute) in
     let new_s = { storage with assets = new_assets; artworks = new_artworks; token_attribute = new_token_attribute } in
+    ([] : operation list) , new_s
+  
+  | Burn_editions b ->
+    let _ = fail_if_token_not_burnable storage.burnable in
+    let new_assets, new_token_attribute = burn_editions (b, storage.assets, storage.token_attribute) in
+    let new_s = { storage with assets = new_assets; token_attribute = new_token_attribute } in
     ([] : operation list) , new_s
 
   | Authorized_transfer transfers ->
@@ -85,4 +100,5 @@ let default_storage: asset_storage = {
     max_trustee = 2n
   }: trustee_storage);
   token_attribute = (Big_map.literal[] : token_attribute_storage);
+  burnable = true;
 }

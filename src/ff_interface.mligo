@@ -32,3 +32,20 @@ type token_attribute_storage = (nat, token_attribute) big_map
 let fa2_invalid_signature = "FA2_INVALID_SIGNATURE"
 let fa2_publickey_address_mismatch = "FA2_PUBLICKEY_ADDRESS_MISMATCH"
 let fa2_expired_timestamp = "FA2_EXPIRED_TIMESTAMP"
+
+let ff_token_not_burnable = "TOKEN_NOT_BURNABLE"
+
+let ff_token_not_found = "TOKEN_NOT_FOUND"
+let ff_token_metadata_not_found = "TOKEN_METADATA_NOT_FOUND"
+
+(** check if a token is not found *)
+let fail_if_token_not_found (token_id, ledger : nat * ledger) : unit =
+  if not Big_map.mem token_id ledger
+    then failwith ff_token_not_found
+  else unit
+
+(** check if a token_metadata is not found *)
+let fail_if_token_metadata_not_found (token_id, metadata : nat * token_metadata_storage) : unit =
+  if not Big_map.mem token_id metadata
+    then failwith ff_token_metadata_not_found
+  else unit
