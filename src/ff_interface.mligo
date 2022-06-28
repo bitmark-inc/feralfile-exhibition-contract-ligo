@@ -17,6 +17,7 @@ type token_attribute =
 {
   artwork_id : bytes;
   edition_number : nat;
+  burned : bool;
 }
 
 (**
@@ -49,10 +50,4 @@ let fail_if_token_not_found (token_id, ledger : nat * ledger) : unit =
 let fail_if_token_metadata_not_found (token_id, metadata : nat * token_metadata_storage) : unit =
   if not Big_map.mem token_id metadata
     then failwith ff_token_metadata_not_found
-  else unit
-
-(** check if a token_attribute is not found *)
-let fail_if_token_attribute_not_found (token_id, attribute : nat * token_attribute_storage) : unit =
-  if not Big_map.mem token_id attribute
-    then failwith ff_token_attribute_not_found
   else unit

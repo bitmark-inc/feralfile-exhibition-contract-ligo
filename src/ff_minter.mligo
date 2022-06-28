@@ -88,6 +88,7 @@ let mint_editions(param, storage, artworks : mint_edition_param list * minter_st
         let new_token_attribute = {
           artwork_id = t.artwork_id;
           edition_number = t.edition;
+          burned = false;
         } in
         {
           token_metadata = Big_map.add token_id new_token_metadata storage.token_metadata;
