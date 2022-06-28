@@ -39,6 +39,7 @@ type minter_storage = {
 let ff_mint_invalid_edition = "EDITION_NUMBER_EXCEEDS_MAX_EDITION_LIMITS"
 let ff_duplicated_token = "TOKEN_HAS_ALREADY_ISSUED"
 let ff_duplicated_token_metadata = "TOKEN_METADATA_HAS_ALREADY_REGISTERED"
+let ff_duplicated_token_attribute = "TOKEN_ATTRIBUTE_HAS_ALREADY_REGISTERED"
 
 (** check if the token edition exceed the maximum number of the artwork *)
 let fail_if_invalid_edition (edition, artwork : nat * artwork) : unit =
@@ -58,6 +59,12 @@ let fail_if_duplicated_token_metadata (token_id, metadata : nat * token_metadata
     then failwith ff_duplicated_token_metadata
   else unit
 
+(** check if a token_attribute is duplicated *)
+let fail_if_duplicated_token_attribute (token_id, attribute : nat * token_attribute_storage) : unit =
+  if Big_map.mem token_id attribute
+    then failwith ff_duplicated_token_attribute
+  else unit
+
 (**
 mint_editions mint editions for the exhibition
 *)
@@ -72,6 +79,7 @@ let mint_editions(param, storage, artworks : mint_edition_param list * minter_st
 
         let _ = fail_if_duplicated_token(token_id, storage.ledger) in
         let _ = fail_if_duplicated_token_metadata(token_id, storage.token_metadata) in
+        let _ = fail_if_duplicated_token_attribute(token_id, storage.token_attribute) in
 
         let new_token_metadata = {
           token_id = token_id;

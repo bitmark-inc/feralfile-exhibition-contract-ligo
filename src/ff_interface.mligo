@@ -37,6 +37,7 @@ let ff_token_not_burnable = "TOKEN_NOT_BURNABLE"
 
 let ff_token_not_found = "TOKEN_NOT_FOUND"
 let ff_token_metadata_not_found = "TOKEN_METADATA_NOT_FOUND"
+let ff_token_attribute_not_found = "TOKEN_ATTRIBUTE_NOT_FOUND"
 
 (** check if a token is not found *)
 let fail_if_token_not_found (token_id, ledger : nat * ledger) : unit =
@@ -48,4 +49,10 @@ let fail_if_token_not_found (token_id, ledger : nat * ledger) : unit =
 let fail_if_token_metadata_not_found (token_id, metadata : nat * token_metadata_storage) : unit =
   if not Big_map.mem token_id metadata
     then failwith ff_token_metadata_not_found
+  else unit
+
+(** check if a token_attribute is not found *)
+let fail_if_token_attribute_not_found (token_id, attribute : nat * token_attribute_storage) : unit =
+  if not Big_map.mem token_id attribute
+    then failwith ff_token_attribute_not_found
   else unit
