@@ -51,3 +51,10 @@ let fail_if_token_metadata_not_found (token_id, metadata : nat * token_metadata_
   if not Big_map.mem token_id metadata
     then failwith ff_token_metadata_not_found
   else unit
+
+(** check if a token_metadata is not found *)
+// [@inline]
+let fail_if_sender_not_token_owner (owner : address) : unit =
+  if owner <> Tezos.sender
+    then failwith fa2_not_owner
+  else unit

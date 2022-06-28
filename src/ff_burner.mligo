@@ -12,18 +12,18 @@ let _burn_editions(param, storage : burn_edition_param list * burner_storage) : 
     match Big_map.find_opt tid storage.ledger with
       | None -> (failwith fa2_token_undefined : burner_storage)
       | Some o ->
-        if o = Tezos.sender
-          then match Big_map.find_opt tid storage.token_attribute with
-            | None -> (failwith ff_token_attribute_not_found : burner_storage)
-            | Some attr ->
-              let new_attr = { attr with burned = true; } in
-              {
-                token_metadata = Big_map.remove tid storage.token_metadata;
-                token_attribute = Big_map.update tid (Some(new_attr)) storage.token_attribute;
-                ledger = Big_map.remove tid storage.ledger;
-              } 
-        else
-          (failwith fa2_not_owner : burner_storage)
+        let _ = fail_if_sender_not_token_owner (o) in
+        let new_s = match Big_map.find_opt tid storage.token_attribute with
+          | None -> (failwith ff_token_attribute_not_found : burner_storage)
+          | Some attr ->
+            let new_attr = { attr with burned = true; } in
+            {
+              token_metadata = Big_map.remove tid storage.token_metadata;
+              token_attribute = Big_map.update tid (Some(new_attr)) storage.token_attribute;
+              ledger = Big_map.remove tid storage.ledger;
+            } 
+        in
+        new_s
   ) in
   List.fold burn_tokens_for_owner param storage
 
