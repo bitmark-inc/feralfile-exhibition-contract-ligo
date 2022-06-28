@@ -14,6 +14,7 @@ type mint_edition_param =
 }
 
 type update_edition_metadata_param = token_metadata
+type issue_artworks_editions_param = nat list
 
 type artwork_param =
 [@layout:comb]
@@ -24,8 +25,6 @@ type artwork_param =
   max_edition : nat;
 }
 
-type issue_artworks_editions_param = nat list
-
 type minter_entrypoints =
   | Mint_editions of mint_edition_param list
   | Update_edition_metadata of update_edition_metadata_param list
@@ -33,14 +32,14 @@ type minter_entrypoints =
 
 type minter_storage = {
   token_metadata : token_metadata_storage;
+  token_attribute : token_attribute_storage;
   ledger : ledger;
 }
 
 let ff_mint_invalid_edition = "EDITION_NUMBER_EXCEEDS_MAX_EDITION_LIMITS"
 let ff_duplicated_token = "TOKEN_HAS_ALREADY_ISSUED"
 let ff_duplicated_token_metadata = "TOKEN_METADATA_HAS_ALREADY_REGISTERED"
-let ff_token_not_found = "TOKEN_NOT_FOUND"
-let ff_token_metadata_not_found = "TOKEN_METADATA_NOT_FOUND"
+let ff_duplicated_token_attribute = "TOKEN_ATTRIBUTE_HAS_ALREADY_REGISTERED"
 
 (** check if the token edition exceed the maximum number of the artwork *)
 let fail_if_invalid_edition (edition, artwork : nat * artwork) : unit =
@@ -60,16 +59,10 @@ let fail_if_duplicated_token_metadata (token_id, metadata : nat * token_metadata
     then failwith ff_duplicated_token_metadata
   else unit
 
-(** check if a token is not found *)
-let fail_if_token_not_found (token_id, ledger : nat * ledger) : unit =
-  if not Big_map.mem token_id ledger
-    then failwith ff_token_not_found
-  else unit
-
-(** check if a token_metadata is not found *)
-let fail_if_token_metadata_not_found (token_id, metadata : nat * token_metadata_storage) : unit =
-  if not Big_map.mem token_id metadata
-    then failwith ff_token_metadata_not_found
+(** check if a token_attribute is duplicated *)
+let fail_if_duplicated_token_attribute (token_id, attribute : nat * token_attribute_storage) : unit =
+  if Big_map.mem token_id attribute
+    then failwith ff_duplicated_token_attribute
   else unit
 
 (**
@@ -86,13 +79,20 @@ let mint_editions(param, storage, artworks : mint_edition_param list * minter_st
 
         let _ = fail_if_duplicated_token(token_id, storage.ledger) in
         let _ = fail_if_duplicated_token_metadata(token_id, storage.token_metadata) in
+        let _ = fail_if_duplicated_token_attribute(token_id, storage.token_attribute) in
 
         let new_token_metadata = {
           token_id = token_id;
           token_info = t.token_info;
         } in
+        let new_token_attribute = {
+          artwork_id = t.artwork_id;
+          edition_number = t.edition;
+          burned = false;
+        } in
         {
           token_metadata = Big_map.add token_id new_token_metadata storage.token_metadata;
+          token_attribute = Big_map.add token_id new_token_attribute storage.token_attribute;
           ledger = Big_map.add token_id owner storage.ledger;
         }
   in
@@ -132,27 +132,28 @@ let update_edition_metadata(param, token_metadata : update_edition_metadata_para
   ) in
   List.fold update param token_metadata
 
-let minter_main (param, _tokens, _artworks
-  : minter_entrypoints * token_storage * artwork_storage)
-  : token_storage * artwork_storage =
+let minter_main (param, _tokens, _artworks, _token_attribute
+  : minter_entrypoints * token_storage * artwork_storage * token_attribute_storage)
+  : token_storage * artwork_storage * token_attribute_storage =
   match param with
   | Mint_editions m ->
     let mint_in = {
       ledger = _tokens.ledger;
       token_metadata = _tokens.token_metadata;
+      token_attribute = _token_attribute;
     } in
     let mint_out = mint_editions (m, mint_in, _artworks) in
     let new_tokens = { _tokens with
       ledger = mint_out.ledger;
       token_metadata = mint_out.token_metadata;
     } in
-    new_tokens, _artworks
+    new_tokens, _artworks, mint_out.token_attribute
   | Update_edition_metadata i ->
     let updated_metadata = update_edition_metadata (i, _tokens.token_metadata) in
     let new_tokens = { _tokens with
       token_metadata = updated_metadata;
     } in
-    new_tokens, _artworks
+    new_tokens, _artworks, _token_attribute
   | Register_artworks a ->
     let new_artworks = register_artworks (a, _artworks) in
-    _tokens, new_artworks
+    _tokens, new_artworks, _token_attribute
