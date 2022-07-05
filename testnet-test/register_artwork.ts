@@ -16,13 +16,14 @@ const register_art = async function () {
   });
 
   const contract = await Tezos.wallet.at(<string>process.env.CONTRACT_ADDRESS);
-
+  const adminAddress = await adminSigner.publicKeyHash()
   try {
     let op = await contract.methods.register_artworks([{
       artist_name: "BRDN-test",
       fingerprint: Uint8Array.from(Buffer.from("IamFingerprint")),
       title: "test",
-      max_edition: 10
+      max_edition: 10,
+      royalty_address: adminAddress
     }]).send();
     await op.confirmation()
     console.log(op)

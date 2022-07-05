@@ -12,6 +12,12 @@
 
 type asset_storage =
 {
+  // exhibition metadata
+  exhibition_title : string;
+  exhibition_max_edition : nat;
+  secondary_sale_royalty_bps : nat;
+  max_royalty_bps : nat;
+
   assets : token_storage;
   admin : admin_storage;
   artworks: artwork_storage;
@@ -19,6 +25,7 @@ type asset_storage =
   trustee : trustee_storage;
   token_attribute: token_attribute_storage;
   burnable : bool;
+  bridgable : bool;
 }
 
 type asset_entrypoints =
@@ -58,10 +65,10 @@ let main (param, storage : asset_entrypoints * asset_storage)
 
   | Minter m ->
     let _ = fail_if_not_authorized_user storage in
-    let new_assets, new_artworks, new_token_attribute = minter_main (m, storage.assets, storage.artworks, storage.token_attribute) in
+    let new_assets, new_artworks, new_token_attribute = minter_main (m, storage.assets, storage.artworks, storage.token_attribute, storage.exhibition_max_edition) in
     let new_s = { storage with assets = new_assets; artworks = new_artworks; token_attribute = new_token_attribute } in
     ([] : operation list) , new_s
-  
+
   | Burn_editions b ->
     let _ = fail_if_token_not_burnable storage.burnable in
     let new_assets, new_token_attribute = burn_editions (b, storage.assets, storage.token_attribute) in
@@ -81,6 +88,11 @@ let main (param, storage : asset_entrypoints * asset_storage)
     ([] : operation list), new_s
 
 let default_storage: asset_storage = {
+  exhibition_title = "test exhibition";
+  exhibition_max_edition = 1000n;
+  secondary_sale_royalty_bps = 1000n;
+  max_royalty_bps = 10000n;
+
   assets= ({
     token_metadata = (Big_map.literal[]: token_metadata_storage);
     ledger = (Big_map.literal[] : ledger);
@@ -101,4 +113,5 @@ let default_storage: asset_storage = {
   }: trustee_storage);
   token_attribute = (Big_map.literal[] : token_attribute_storage);
   burnable = true;
+  bridgable = false;
 }

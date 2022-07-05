@@ -23,6 +23,7 @@ type artwork_param =
   artist_name : string;
   fingerprint : bytes;
   max_edition : nat;
+  royalty_address: address;
 }
 
 type minter_entrypoints =
@@ -36,6 +37,7 @@ type minter_storage = {
   ledger : ledger;
 }
 
+let ff_artwork_invalid_max_edition = "ARTWORK_MAX_EDITION_EXCEEDS_EXHIBITION_MAX_EDITION"
 let ff_mint_invalid_edition = "EDITION_NUMBER_EXCEEDS_MAX_EDITION_LIMITS"
 let ff_duplicated_token = "TOKEN_HAS_ALREADY_ISSUED"
 let ff_duplicated_token_metadata = "TOKEN_METADATA_HAS_ALREADY_REGISTERED"
@@ -45,6 +47,11 @@ let ff_duplicated_token_attribute = "TOKEN_ATTRIBUTE_HAS_ALREADY_REGISTERED"
 let fail_if_invalid_edition (edition, artwork : nat * artwork) : unit =
   if edition > artwork.max_edition
     then failwith ff_mint_invalid_edition
+  else unit
+
+let fail_if_artwork_edition_size_valid (edition, exhibition_edition : nat * nat) : unit =
+  if edition > exhibition_edition
+    then failwith ff_artwork_invalid_max_edition
   else unit
 
 (** check if a token is duplicated *)
@@ -104,9 +111,10 @@ let mint_editions(param, storage, artworks : mint_edition_param list * minter_st
 (**
 register_artworks creates artworks for an exhibition
 *)
-let register_artworks(param, artworks : artwork_param list * artwork_storage) : artwork_storage =
+let register_artworks(param, artworks, exhibition_max_edition : artwork_param list * artwork_storage * nat) : artwork_storage =
   let register = (fun (artworks, artwork_param : artwork_storage * artwork_param) ->
     (** Generate artwork_id using keccak256 algorithm *)
+    let _ = fail_if_artwork_edition_size_valid (artwork_param.max_edition, exhibition_max_edition) in
     let artwork_id = Crypto.keccak artwork_param.fingerprint in
     if Map.mem artwork_id artworks then (failwith "USED_ARTWORK_ID" : artwork_storage)
     else
@@ -117,6 +125,7 @@ let register_artworks(param, artworks : artwork_param list * artwork_storage) : 
         title = artwork_param.title;
         max_edition = artwork_param.max_edition;
         token_start_id = artwork_id_nat;
+        royalty_address = artwork_param.royalty_address;
       } in
       Map.add artwork_id new_artwork artworks
   ) in
@@ -132,8 +141,8 @@ let update_edition_metadata(param, token_metadata : update_edition_metadata_para
   ) in
   List.fold update param token_metadata
 
-let minter_main (param, _tokens, _artworks, _token_attribute
-  : minter_entrypoints * token_storage * artwork_storage * token_attribute_storage)
+let minter_main (param, _tokens, _artworks, _token_attribute, _exhibition_max_edition
+  : minter_entrypoints * token_storage * artwork_storage * token_attribute_storage * nat)
   : token_storage * artwork_storage * token_attribute_storage =
   match param with
   | Mint_editions m ->
@@ -155,5 +164,5 @@ let minter_main (param, _tokens, _artworks, _token_attribute
     } in
     new_tokens, _artworks, _token_attribute
   | Register_artworks a ->
-    let new_artworks = register_artworks (a, _artworks) in
+    let new_artworks = register_artworks (a, _artworks, _exhibition_max_edition) in
     _tokens, new_artworks, _token_attribute
