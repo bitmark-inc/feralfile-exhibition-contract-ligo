@@ -6,14 +6,15 @@ type artwork =
   title : string;
   artist_name : string;
   fingerprint : bytes;
-  max_edition: nat;
+  max_edition : nat;
   token_start_id : nat;
+  royalty_address : address;
 }
 
 (**
 Feral File edition token artribute structure
 *)
-type token_attribute = 
+type token_attribute =
 {
   artwork_id : bytes;
   edition_number : nat;
