@@ -51,10 +51,11 @@ const auth_transfer = async function () {
         const pk = await noXTZSigner.publicKey()
 
         let packedTimestamp = packData({ int: expiry }, { prim: 'timestamp' });
+        let contractAddress = packData({ string: <string>process.env.CONTRACT_ADDRESS }, { prim: 'address' });
         let packedTo = packData({ string: adminAddr }, { prim: 'address' });
         let packedTokenID = packData({ int: tokenID }, { prim: 'int' });
 
-        let bytesData = Buffer.from(packedTimestamp.concat(packedTo).concat(packedTokenID))
+        let bytesData = Buffer.from(packedTimestamp.concat(contractAddress).concat(packedTo).concat(packedTokenID))
 
         let prefix = Buffer.from("54657a6f73205369676e6564204d6573736167653a", "hex")
 
