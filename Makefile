@@ -1,6 +1,6 @@
 .PHONY: api
 
-default: clean compile-consts compile compile-storage
+default: clean compile compile-storage
 
 OS=$(shell /usr/bin/uname)
 PWD=$(shell pwd)
@@ -16,15 +16,11 @@ clean:
 	rm -rf ./compilation
 	mkdir ./compilation
 
-compile-consts:
-	${LIGO} compile constant cameligo "bytes_to_nat" --format json --init-file src/global_constants/bytes_to_nat.mligo > src/global_constants/bytes_to_nat.json
-	jq -r '[.text_code]' src/global_constants/bytes_to_nat.json > src/global_constants/bytes_to_nat_array.json
-
 compile:
-	${LIGO} compile contract src/ff_fa2_asset.mligo -o compilation/contract.tz --file-constants src/global_constants/bytes_to_nat_array.json
+	${LIGO} compile contract src/ff_fa2_asset.mligo -o compilation/contract.tz
 
 compile-storage:
-	${LIGO} compile storage src/ff_fa2_asset.mligo 'default_storage' -o compilation/storage.tz --file-constants src/global_constants/bytes_to_nat_array.json
+	${LIGO} compile storage src/ff_fa2_asset.mligo 'default_storage' -o compilation/storage.tz
 
 tc-init:
 	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes tezos-client --endpoint $(shell jq -r .shell .env.json) config update
@@ -40,11 +36,6 @@ tc-deploy: compile compile-storage
 	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes tezos-client originate contract FFExhibition transferring 0 from ff-deployer \
 	running ./compilation/contract.tz --burn-cap 15 --init '$(shell cat ./compilation/storage.tz)'
 	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes tezos-client forget all contracts --force
-
-# NOTE: This command can only run one time for each network
-# since each global constant can only register once in a specific network
-tc-deploy-consts: compile-consts
-	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes tezos-client register global constant '$(shell jq -r .text_code src/global_constants/bytes_to_nat.json)' from ff-deployer --burn-cap 2
 
 test-register-artwork:
 	TEZOS_RPC_URL=$(shell jq -r .shell .env.json) \
