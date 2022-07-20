@@ -41,6 +41,8 @@ let ff_token_not_found = "TOKEN_NOT_FOUND"
 let ff_token_metadata_not_found = "TOKEN_METADATA_NOT_FOUND"
 let ff_token_attribute_not_found = "TOKEN_ATTRIBUTE_NOT_FOUND"
 
+let ff_extra_xtz_sent = "EXTRA_XTZ_SENT"
+
 (** check if a token is not found *)
 let fail_if_token_not_found (token_id, ledger : nat * ledger) : unit =
   if not Big_map.mem token_id ledger

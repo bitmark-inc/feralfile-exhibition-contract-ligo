@@ -92,6 +92,12 @@ test-remove-trustee:
 	CONTRACT_ADDRESS=$(shell jq -r .contract .env.json) \
 	npm run test-remove-trustee
 
+test-action-with-xtz:
+	TEZOS_RPC_URL=$(shell jq -r .shell .env.json) \
+	DEPLOYER_PRIVATE_KEY=$(shell jq -r .key .env.json) \
+	CONTRACT_ADDRESS=$(shell jq -r .contract .env.json) \
+	npm run test-action-with-xtz
+
 test-contract: test-register-artwork test-mint-editions test-update-edition-metadata test-authorized-transfer test-burn-editions test-add-trustee test-remove-trustee
 
 git-init:

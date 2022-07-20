@@ -50,8 +50,17 @@ let fail_if_token_not_burnable (burnable : bool) : unit =
     then failwith ff_token_not_burnable
   else unit
 
+[@inline]
+let fail_if_xtz_greater_than_zero () : unit =
+  let amount = Tezos.amount in
+  if amount > 0tz
+    then failwith ff_extra_xtz_sent
+  else unit
+
+
 let main (param, storage : asset_entrypoints * asset_storage)
     : (operation list) * asset_storage =
+  let _ = fail_if_xtz_greater_than_zero () in
   match param with
   | Assets a ->
     let ops, new_assets = fa2_main (a, storage.assets) in
