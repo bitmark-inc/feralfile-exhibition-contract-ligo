@@ -111,14 +111,14 @@ let mint_editions(param, storage, artworks : mint_edition_param list * minter_st
 (**
 register_artworks creates artworks for an exhibition
 *)
-let register_artworks(param, artworks, exhibition_max_edition : artwork_param list * artwork_storage * nat) : artwork_storage =
+let register_artworks(param, artworks, exhibition_max_edition, bytes_to_nat : artwork_param list * artwork_storage * nat * ((bytes * nat * nat) -> nat)) : artwork_storage =
   let register = (fun (artworks, artwork_param : artwork_storage * artwork_param) ->
     (** Generate artwork_id using keccak256 algorithm *)
     let _ = fail_if_artwork_edition_size_valid (artwork_param.max_edition, exhibition_max_edition) in
     let artwork_id = Crypto.keccak artwork_param.fingerprint in
     if Map.mem artwork_id artworks then (failwith "USED_ARTWORK_ID" : artwork_storage)
     else
-      let artwork_id_nat = (Tezos.constant "exprutNrs68aNmrp3DSif5U7Usq2e8f5ZH9xbDekcKdEErYPv11brk" : (bytes * nat * nat) -> nat)(artwork_id, 0n, 0n) in
+      let artwork_id_nat = bytes_to_nat(artwork_id, 0n, 0n) in
       let new_artwork = {
         artist_name = artwork_param.artist_name;
         fingerprint = artwork_param.fingerprint;
@@ -141,8 +141,8 @@ let update_edition_metadata(param, token_metadata : update_edition_metadata_para
   ) in
   List.fold update param token_metadata
 
-let minter_main (param, _tokens, _artworks, _token_attribute, _exhibition_max_edition
-  : minter_entrypoints * token_storage * artwork_storage * token_attribute_storage * nat)
+let minter_main (param, _utils, _tokens, _artworks, _token_attribute, _exhibition_max_edition
+  : minter_entrypoints * bytes_utils * token_storage * artwork_storage * token_attribute_storage * nat)
   : token_storage * artwork_storage * token_attribute_storage =
   match param with
   | Mint_editions m ->
@@ -164,5 +164,9 @@ let minter_main (param, _tokens, _artworks, _token_attribute, _exhibition_max_ed
     } in
     new_tokens, _artworks, _token_attribute
   | Register_artworks a ->
-    let new_artworks = register_artworks (a, _artworks, _exhibition_max_edition) in
+    let _bytes_to_nat = match Big_map.find_opt 0n _utils with
+      | None -> (failwith ff_util_func_not_declared : ((bytes * nat * nat) -> nat))
+      | Some n -> n
+    in
+    let new_artworks = register_artworks (a, _artworks, _exhibition_max_edition, _bytes_to_nat) in
     _tokens, new_artworks, _token_attribute

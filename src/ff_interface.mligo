@@ -21,6 +21,8 @@ type token_attribute =
   burned : bool;
 }
 
+type bytes_utils = (nat, (bytes * nat * nat) -> nat) big_map
+
 (**
 Feral File exhibition artworks storage
 *)
@@ -42,6 +44,8 @@ let ff_token_metadata_not_found = "TOKEN_METADATA_NOT_FOUND"
 let ff_token_attribute_not_found = "TOKEN_ATTRIBUTE_NOT_FOUND"
 
 let ff_extra_xtz_sent = "EXTRA_XTZ_SENT"
+
+let ff_util_func_not_declared = "UTILITY_FUNCTION_IS_NOT_DECLARED"
 
 (** check if a token is not found *)
 let fail_if_token_not_found (token_id, ledger : nat * ledger) : unit =

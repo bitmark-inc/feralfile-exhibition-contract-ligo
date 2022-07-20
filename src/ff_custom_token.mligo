@@ -53,10 +53,11 @@ let _authorized_transfer (transfers, ledger : authorized_transfer list * ledger)
           | Some o ->
             if o <> tx.from_
               then (failwith fa2_insufficient_balance : ledger)
-            else 
+            else
+              let contract_address = Bytes.pack Tezos.self_address in
               let p_bytes_to_ = Bytes.pack dst.to_ in
               let p_bytes_token_id = Bytes.pack dst.token_id in
-              let bytes_msg = Bytes.concat sig_prefix (Bytes.concat p_bytes_expiry (Bytes.concat p_bytes_to_ p_bytes_token_id)) in
+              let bytes_msg = Bytes.concat sig_prefix (Bytes.concat p_bytes_expiry (Bytes.concat contract_address (Bytes.concat p_bytes_to_ p_bytes_token_id))) in
               let bytes_sign_msg = Bytes.pack bytes_msg in
               let _ = fail_if_invalid_signature(tx.pk, dst.sig, bytes_sign_msg) in
               Big_map.update dst.token_id (Some dst.to_) ll
