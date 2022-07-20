@@ -43,6 +43,8 @@ let ff_token_not_found = "TOKEN_NOT_FOUND"
 let ff_token_metadata_not_found = "TOKEN_METADATA_NOT_FOUND"
 let ff_token_attribute_not_found = "TOKEN_ATTRIBUTE_NOT_FOUND"
 
+let ff_extra_xtz_sent = "EXTRA_XTZ_SENT"
+
 let ff_util_func_not_declared = "UTILITY_FUNCTION_IS_NOT_DECLARED"
 
 (** check if a token is not found *)

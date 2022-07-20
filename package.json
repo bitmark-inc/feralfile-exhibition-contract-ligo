@@ -11,6 +11,7 @@
     "test-authorized-transfer": "ts-node testnet-test/authorized_transfer.ts",
     "test-add-trustee": "ts-node testnet-test/add_trustee.ts",
     "test-remove-trustee": "ts-node testnet-test/remove_trustee.ts",
+    "test-action-with-xtz": "ts-node testnet-test/action_with_xtz.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
