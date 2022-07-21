@@ -49,11 +49,6 @@ let fail_if_invalid_edition (edition, artwork : nat * artwork) : unit =
     then failwith ff_mint_invalid_edition
   else unit
 
-let fail_if_artwork_edition_size_valid (edition, exhibition_edition : nat * nat) : unit =
-  if edition > exhibition_edition
-    then failwith ff_artwork_invalid_max_edition
-  else unit
-
 (** check if a token is duplicated *)
 let fail_if_duplicated_token (token_id, ledger : nat * ledger) : unit =
   if Big_map.mem token_id ledger
@@ -111,10 +106,9 @@ let mint_editions(param, storage, artworks : mint_edition_param list * minter_st
 (**
 register_artworks creates artworks for an exhibition
 *)
-let register_artworks(param, artworks, exhibition_max_edition, bytes_to_nat : artwork_param list * artwork_storage * nat * ((bytes * nat * nat) -> nat)) : artwork_storage =
+let register_artworks(param, artworks, bytes_to_nat : artwork_param list * artwork_storage * ((bytes * nat * nat) -> nat)) : artwork_storage =
   let register = (fun (artworks, artwork_param : artwork_storage * artwork_param) ->
     (** Generate artwork_id using keccak256 algorithm *)
-    let _ = fail_if_artwork_edition_size_valid (artwork_param.max_edition, exhibition_max_edition) in
     let artwork_id = Crypto.keccak artwork_param.fingerprint in
     if Map.mem artwork_id artworks then (failwith "USED_ARTWORK_ID" : artwork_storage)
     else
@@ -141,8 +135,8 @@ let update_edition_metadata(param, token_metadata : update_edition_metadata_para
   ) in
   List.fold update param token_metadata
 
-let minter_main (param, _utils, _tokens, _artworks, _token_attribute, _exhibition_max_edition
-  : minter_entrypoints * bytes_utils * token_storage * artwork_storage * token_attribute_storage * nat)
+let minter_main (param, _utils, _tokens, _artworks, _token_attribute
+  : minter_entrypoints * bytes_utils * token_storage * artwork_storage * token_attribute_storage)
   : token_storage * artwork_storage * token_attribute_storage =
   match param with
   | Mint_editions m ->
@@ -168,5 +162,5 @@ let minter_main (param, _utils, _tokens, _artworks, _token_attribute, _exhibitio
       | None -> (failwith ff_util_func_not_declared : ((bytes * nat * nat) -> nat))
       | Some n -> n
     in
-    let new_artworks = register_artworks (a, _artworks, _exhibition_max_edition, _bytes_to_nat) in
+    let new_artworks = register_artworks (a, _artworks, _bytes_to_nat) in
     _tokens, new_artworks, _token_attribute
