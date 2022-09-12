@@ -1,0 +1,12 @@
+{
+  "name": "gämma",
+  "description": "Pixels are the smallest element that can be displayed on a digital screen, groupings of which comprise the billions of still and moving images in circulation today. Pixels are not dissimilar to gamma rays, the shortest yet most powerful of the rays in the electromagnetic spectrum. The difference between them would seem to do with perception: gamma rays are invisible, pixels are not. However, both require specifically designed environments to engender visibility, such as a scintillation detector or a computer with a digital display. Because of the relative ubiquity of the latter, the specificity — and necessity — of the computer environment may be easily overlooked, if not forgotten, when perceiving pixels. The seduction of the screen, with its pixel-based representations, obfuscates the fusion of software and hardware that illuminate content: code and cold cathode. As p1xelfool says, ‘Code = light.’ — p1xelfool",
+  "interfaces": [
+    "TZIP-12"
+  ],
+  "homepage": "https://feralfile.com",
+  "authors": [
+    "p1xelfool"
+  ],
+  "views": []
+}

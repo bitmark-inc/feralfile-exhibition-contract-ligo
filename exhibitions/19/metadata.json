@@ -1,0 +1,18 @@
+{
+  "name": "Doppelganger",
+  "description": "We all feed fragments of ourselves into hundreds of databases that are farmed and cross-fertilized; they produce digital clones representing us in every important digital transaction and communication. Are our digital selves more important than our physical selves? How do our selves engage differently in our current world and culture? Each of the artists in the show Doppelganger are exploring how they define the self, especially in connection with technological change. Each of their works will exist in digital and physical forms, the same and yet also very different because of the materiality or lack thereof. Perhaps each format will bring collectors a different understanding of the ideas, empowered by touch instead of channeling through a cursor. Hopefully balance and reconciliation can be found between the physical and digital, letting us celebrate both and also consider what control means in the rapids of our swift life streams. — Chris Coleman",
+  "interfaces": [
+    "TZIP-12"
+  ],
+  "homepage": "https://feralfile.com",
+  "authors": [
+    "Sophie Kahn",
+    "Rodell Warner",
+    "Famous New Media Artist Jeremy Bailey",
+    "Matthew Plummer-Fernández",
+    "LaTurbo Avedon",
+    "Rujunko Pugh (Syberweerd)",
+    "Laleh Mehran"
+  ],
+  "views": []
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Ecotone",
+  "description": "An “ecotone” is a region of transition between two biological communities, which is richer in species than both. The exhibition Ecotone distills the creative outflows of the Glitch community of artists and technologists. This growing network considers digital and natural ecologies to be innately entangled, with cross-border collaboration a vital means of generating new social realities. Involving over 60 participants from around the world, Glitch is a spectrum of strategies and a model for a new creator ecology — artistic, poetic, and human-machinic. For this show with Feral File, Glitch is represented by a number of leading artists, whose range of approaches reflects the plurality of the community. — Primavera De Filippi, Stina Gustafsson, and Alex Estorick",
+  "interfaces": [
+    "TZIP-12"
+  ],
+  "homepage": "https://feralfile.com",
+  "authors": [
+    "Sarah Friend",
+    "Jakob Kudsk Steensen",
+    "Gene Kogan",
+    "Kalen Iwamoto",
+    "aurèce vettier",
+    "Iannis Bardakos",
+    "Primavera De Filippi & Wolfgang Natlacen",
+    "ORLAN"
+  ],
+  "views": []
+}

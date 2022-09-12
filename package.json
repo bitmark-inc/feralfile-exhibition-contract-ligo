@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "originator.js",
   "scripts": {
+    "ts": "ts-node",
     "deploy-contracts": "ts-node testnet-test/deploy.ts",
     "test-register-artwork": "ts-node testnet-test/register_artwork.ts",
     "test-mint-editions": "ts-node testnet-test/mint_editions.ts",
@@ -21,6 +22,7 @@
     "@taquito/signer": "^11.0.0",
     "@taquito/taquito": "^11.0.0",
     "@types/dotenv": "^8.2.0",
+    "axios": "^0.27.2",
     "dotenv": "^16.0.0",
     "ts-node": "^10.7.0"
   },
