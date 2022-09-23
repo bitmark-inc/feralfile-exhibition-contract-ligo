@@ -17,10 +17,10 @@ clean:
 	mkdir ./compilation
 
 compile:
-	${LIGO} compile contract src/ff_fa2_asset.mligo -o compilation/contract.tz
+	${LIGO} compile contract src/ff_main.mligo -o compilation/contract.tz
 
 compile-storage:
-	${LIGO} compile storage src/ff_fa2_asset.mligo 'default_storage' -o compilation/storage.tz
+	${LIGO} compile storage src/ff_main.mligo 'default_storage' -o compilation/storage.tz
 
 tc-init:
 	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes tezos-client --endpoint $(shell jq -r .shell .env.json) config update
