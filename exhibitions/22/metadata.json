@@ -1,0 +1,22 @@
+{
+  "name": "Simulation Sketchbook: Works in Process",
+  "description": "“In analog forms, sketches are highly correlated with drawing on paper. Simulation Sketchbook: Works in Process poses a simple question: what does a sketch look like for an artist working in more experimental modes like digital art and time-based media? What is a sketch when it’s not a conventional drawing? Whether they take the form of code, video, 3D models, immersive spaces, or multimodal explorations that don’t fit a neat categorization, these “sketches” are no less integral to the development of the respective artist’s body of work. Because of the relative novelty among audiences, the technical and conceptual merits of these process-oriented arts can be difficult to grasp, leaving underlying poetics invisible or misinterpreted. Worse still is the assumption that this work is tantamount to button-pushing, that machines are the true authors — trivializing the years spent developing a unique relationship with these materials.” — Jesse Damiani",
+  "interfaces": [
+    "TZIP-12"
+  ],
+  "homepage": "https://feralfile.com",
+  "authors": [
+    "Alida Sun",
+    "Anne Spalter",
+    "Botto",
+    "Behnaz Farahi",
+    "David OReilly",
+    "IX Shells",
+    "John Gerrard",
+    "Mimi Onuoha",
+    "Monica Rizzolli",
+    "Qianqian Ye",
+    "Reeps One"
+  ],
+  "views": []
+}

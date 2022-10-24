@@ -1,0 +1,16 @@
+{
+  "name": "Harbingers",
+  "description": "The group show Harbingers brings together a bestiary of the posthuman, assembling artistic visions of transhumanist desires and technogenic anxieties in an age of accelerated biosocial transformation. A menagerie of mutant creatures emerges from the recombinant crucible of computational manipulation, genetic engineering, viral mutation, biohacking, and cross-species contamination. Novel corporeal formations, at once familiar and strange, are produced through complex interrelations of nature, culture, and technology. Modernity becomes an agent of metamorphosis through the vectors of engineering, adaptation, and aberration. Each work in Harbingers offers a portal into a fabulated mirror world governed by its own mythology. The organisms assembled here include coded chimeras, genetically modified superhumans, bodies held captive by the algorithmic surround, and plants and animals that have evolved to metabolize plastics and toxic waste. All serve as sentinels of the transfigurative powers of technology and ecocide. — Julia Kaganskiy",
+  "interfaces": [
+    "TZIP-12"
+  ],
+  "homepage": "https://feralfile.com",
+  "authors": [
+    "Zach Blas",
+    "Pinar Yoldas",
+    "*particle group*",
+    "Shu Lea Cheang",
+    "Sofia Crespo"
+  ],
+  "views": []
+}
