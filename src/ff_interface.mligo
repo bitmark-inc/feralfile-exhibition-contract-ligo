@@ -7,6 +7,8 @@ type artwork =
   artist_name : string;
   fingerprint : bytes;
   max_edition : nat;
+  ae_amount : nat;
+  pp_amount : nat;
   token_start_id : nat;
   royalty_address : address;
 }

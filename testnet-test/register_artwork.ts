@@ -23,6 +23,8 @@ const register_art = async function () {
       fingerprint: Uint8Array.from(Buffer.from("IamFingerprint")),
       title: "test",
       max_edition: 10,
+      ae_amount: 1,
+      pp_amount: 1,
       royalty_address: adminAddress
     }]).send();
     await op.confirmation()
