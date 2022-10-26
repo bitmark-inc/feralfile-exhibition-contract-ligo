@@ -23,6 +23,8 @@ type artwork_param =
   artist_name : string;
   fingerprint : bytes;
   max_edition : nat;
+  ae_amount : nat;
+  pp_amount : nat;
   royalty_address: address;
 }
 
@@ -45,7 +47,7 @@ let ff_duplicated_token_attribute = "TOKEN_ATTRIBUTE_HAS_ALREADY_REGISTERED"
 
 (** check if the token edition exceed the maximum number of the artwork *)
 let fail_if_invalid_edition (edition, artwork : nat * artwork) : unit =
-  if edition > artwork.max_edition
+  if edition >= artwork.max_edition + artwork.ae_amount + artwork.pp_amount
     then failwith ff_mint_invalid_edition
   else unit
 
@@ -118,6 +120,8 @@ let register_artworks(param, artworks, bytes_to_nat : artwork_param list * artwo
         fingerprint = artwork_param.fingerprint;
         title = artwork_param.title;
         max_edition = artwork_param.max_edition;
+        ae_amount = artwork_param.ae_amount;
+        pp_amount = artwork_param.pp_amount;
         token_start_id = artwork_id_nat;
         royalty_address = artwork_param.royalty_address;
       } in
