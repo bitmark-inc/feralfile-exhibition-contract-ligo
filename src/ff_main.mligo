@@ -2,6 +2,7 @@
 
 let default_storage: asset_storage = {
   exhibition_title = "test exhibition";
+  code_version = "FeralfileExhibitionV2";
   secondary_sale_royalty_bps = 1000n;
   max_royalty_bps = 10000n;
 

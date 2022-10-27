@@ -14,6 +14,7 @@ type asset_storage =
 {
   // exhibition metadata
   exhibition_title : string;
+  code_version : string;
   secondary_sale_royalty_bps : nat;
   max_royalty_bps : nat;
 
