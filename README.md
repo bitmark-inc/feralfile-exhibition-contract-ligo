@@ -3,7 +3,7 @@
 ## Pre-requisite
 
 - [ligo](https://ligolang.org/docs/intro/installation/)
-- [tezos-client](https://wiki.tezos.com/build/clients/installation-and-setup)
+- [octez-client v15.0+](https://wiki.tezos.com/build/clients/installation-and-setup)  (former tezos-client)
 - docker (for mac user)
 
 ### ligo on Mac
@@ -30,7 +30,19 @@ Use `make` to compile the contract code
 
 ## Deploy
 
-Run
+First you need to setup the ff-deployer account. It can be either by local secret or a ledger. For the local setup, please ensure `.env.json` is well-configured with a `key`.
+
+```sh
+make init-local
+```
+
+or
+
+```sh
+make init-ledger
+```
+
+After the account is set up, run
 
 ```sh
 make deploy
