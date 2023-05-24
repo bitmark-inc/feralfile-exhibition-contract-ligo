@@ -1,0 +1,12 @@
+{
+  "name": "Peer to Peer Launch Party Exclusive",
+  "description": "This digital souvenir was gifted exclusively to attendees of the Peer to Peer Launch Party at the Mondrian Hotel in Miami Beach on November 29, 2022. The event included a one-night-only pop-up installation of the extraordinary artworks in Peer to Peer, an exhibition organized by the Buffalo AKG Art Museum in partnership with Feral File. The design of the token references the invitation to the first museum exhibition of photography as fine art, which was presented at the Albright Art Gallery (the AKG’s predecessor) in 1910, and includes a compass that always points the viewer back to the museum. To redeem one free Adult admission to the Buffalo AKG Art Museum (opening May 25, 2023), present this token using the Autonomy wallet on your phone when checking in for your visit. Offer valid through November 30, 2024.",
+  "interfaces": [
+    "TZIP-12"
+  ],
+  "homepage": "https://feralfile.com",
+  "authors": [
+    "Feral File"
+  ],
+  "views": []
+}

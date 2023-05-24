@@ -1,0 +1,12 @@
+{
+  "name": "MoMA R&D Salon 40: The Third Web",
+  "description": "A digital keepsake by Stephanie Dinkins created as a provocation in commemoration of the 10 year anniversary of the MOMA R&D Salons.",
+  "interfaces": [
+    "TZIP-12"
+  ],
+  "homepage": "https://feralfile.com",
+  "authors": [
+    "Stephanie Dinkins`"
+  ],
+  "views": []
+}

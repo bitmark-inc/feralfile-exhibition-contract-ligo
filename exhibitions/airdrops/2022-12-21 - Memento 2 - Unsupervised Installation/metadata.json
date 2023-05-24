@@ -1,0 +1,12 @@
+{
+  "name": "Memento 2 - Unsupervised Installation",
+  "description": "Refik Anadol’s Unsupervised installation in MoMA’s Gund Lobby",
+  "interfaces": [
+    "TZIP-12"
+  ],
+  "homepage": "https://feralfile.com/profiles/Refik%20Anadol",
+  "authors": [
+    "Refik Anadol & MoMA"
+  ],
+  "views": []
+}

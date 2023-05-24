@@ -1,0 +1,12 @@
+{
+  "name": "I Know – On the aesthetic of truth – Digital Memento",
+  "description": "The “truth” considered in this exhibition is not a scientific or academic one, but rather an imaginative one. It is based on the slow unfolding that viewers experience when they sit with an artwork. In our current post-truth society, in which veracity and accuracy are sacrificed on the altar of hyperbole and misinformation, I Know invites artists to reexamine historical moments and to evoke images of the past in order to claim a place within it. These artists struggle with power, inequality, and discrimination, addressing debates about mass surveillance and the architecture of the web3. The works in the exhibition reflect on traditional modes of thinking, both inside of and outside of the arts, and in so doing make way for future possibilities. — Giorgio Vitale",
+  "interfaces": [
+    "TZIP-12"
+  ],
+  "homepage": "https://feralfile.com",
+  "authors": [
+    "Feral File"
+  ],
+  "views": []
+}

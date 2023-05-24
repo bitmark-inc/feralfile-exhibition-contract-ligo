@@ -1,0 +1,22 @@
+{
+  "name": "Feral File #030 — FeralVerse",
+  "description": "“Our Feral File offering — the first exhibition of verse on this platform — is planted here as a seed for the poetry journal of the future, in which authorial imagination is unbounded, language and art exist in symbiosis, and every contributor is a vital force in a literary ecosystem in which connection to verse can lead to collection. In celebration of both National Poetry Month and Earth Month, the texts published here as non-fungible Tezos tokens – each a collaborative performance between writers and artists at the avant-garde of web3 poetry, including some of the planet’s most renowned voices – reflect diverse perspectives, aesthetics, and approaches to the worlds around us and inside us, always in flux. Every work invites its reader to step into a reality augmented through the art of poetry, and to engage deeply with the untamed universe of possibilities for writers on (and off) the blockchain.” — theVERSEverse",
+  "interfaces": [
+    "TZIP-12"
+  ],
+  "imageUri": "ipfs://QmcjWJ9mr82vNo4LKUKVZP5w2pEdRRgYTQ62EQWw7mrwUm",
+  "homepage": "https://feralfile.com",
+  "authors": [
+    "Victoria Chang x Alexandra Crouwers",
+    "Lillian-Yvonne Bertram x Dina Chang",
+    "P. Scott Cunningham x Connie Bakshi",
+    "John James x Soliman Lopez",
+    "Seth Bockley x Helena Sarin",
+    "Denise Duhamel x Diane Drubay",
+    "Ana Maria Caballero x Nancy Baker Cahill",
+    "Kalen Iwamoto x Julien Silvano",
+    "Sasha Stiles x Nathaniel Stern",
+    "Marci Calabretta Cancio-Bello x Gretta Louw"
+  ],
+  "views": []
+}

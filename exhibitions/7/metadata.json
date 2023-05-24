@@ -1,0 +1,23 @@
+{
+  "name": "Reflections in the Water",
+  "description": "Working with AI art sometimes feels like gazing into a pond of water. In a still pond, we see a clear, gently blurred version of ourselves staring back at us, while turbulent waters return rippled echoes of our shape. These changing reflections of ourselves are similar to images generated from data, which can be hyperrealistic depictions of the original, or images that are surreal and barely recognizable, as errors creep in.\nThis exhibition looks at the way artists represent nature and humans, using the latest machine learning technologies to conjure seascapes, imaginary marine creatures, autumn leaves, and musings on the human form. Masks and faces akin to the grotesque rear their heads, reminding us of the early errors of these technologies and the eternal human fascination with depicting ourselves. These artists present AI as a tool to craft new reflections on perennial subjects, as well as a creative partner, conjuring new landscapes, creatures, and forms. — Luba Elliott",
+  "interfaces": [
+    "TZIP-12"
+  ],
+  "homepage": "https://feralfile.com",
+  "authors": [
+    "Anna Ridler & Caroline Sinders",
+    "Daniel Ambrosi",
+    "Entangled Others",
+    "Helena Sarin",
+    "Jake Elwes",
+    "Libby Heaney",
+    "Mal Som",
+    "Mario Klingemann",
+    "Scott Eaton",
+    "Vadim Epstein",
+    "Yuma Kishi",
+    "Terence Broad"
+  ],
+  "views": []
+}

@@ -1,0 +1,13 @@
+{
+  "name": "Memento 5 - Unsupervised Installation",
+  "description": "A commemoration of Refik Anadol's Unsupervised exhibition, the Memento series features documentation of the installation in MoMA's Gund Lobby.",
+  "interfaces": [
+    "TZIP-12"
+  ],
+  "imageUri": "ipfs://QmQeyCaQTSCDUd1dRBQAZCno9SRKhgnqwVpQ744m44X6cX",
+  "homepage": "https://feralfile.com/profiles/Refik%20Anadol",
+  "authors": [
+    "Refik Anadol and MoMA"
+  ],
+  "views": []
+}

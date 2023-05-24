@@ -1,0 +1,12 @@
+{
+  "name": "Luxembourg Art Week",
+  "description": "Luxembourg Art Week has partnered with Feral File and Parallel.art to connect its audience with the field of NFTs.  To create an initial engagement with collectors, a generative art piece by Aleksandra Jovanic will be gifted by the fair to those who desire to redeem it.  This work will serve as a bridge between collectors, art fair, and Feral File, creating new interlocutors in the dialogue around NFTs and digital art.",
+  "interfaces": [
+    "TZIP-12"
+  ],
+  "homepage": "https://feralfile.com",
+  "authors": [
+    "Aleksandra Jovanić"
+  ],
+  "views": []
+}

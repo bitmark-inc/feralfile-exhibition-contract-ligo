@@ -1,0 +1,12 @@
+{
+  "name": "Memento 1 - Study for Unsupervised",
+  "description": "Opening Day of Refik Anadol’s Unsupervised in MoMA’s Gund Lobby",
+  "interfaces": [
+    "TZIP-12"
+  ],
+  "homepage": "https://feralfile.com/profiles/Refik%20Anadol",
+  "authors": [
+    "Refik Anadol"
+  ],
+  "views": []
+}

@@ -1,0 +1,13 @@
+{
+  "name": "Melody Figments - Oscillation to the Edge",
+  "description": "Maria Finkelmeier’s original music and motion translated as visual web, inspired by South Florida.",
+  "interfaces": [
+    "TZIP-12"
+  ],
+  "imageUri": "ipfs://QmaLx8tQXXNUvTngthX2YLmsiBngu3o4myAZj9JDq6MyqE",
+  "homepage": "https://feralfile.com/profiles/MF%20Dynamics",
+  "authors": [
+    "MF Dynamics"
+  ],
+  "views": []
+}

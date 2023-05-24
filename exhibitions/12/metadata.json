@@ -1,0 +1,16 @@
+{
+  "name": "Field Guide",
+  "description": "Rather than act as a mirror, dutifully recreating or reporting back on the world around us, these artists often act as a portal to an entirely new universe. A universe where the artist has crafted unique entities from scratch through many compressed cycles of evolution. Where fascinating beings and impossible environments blend the foreign and the familiar, giving us a sense that there is life here, but perhaps not life as we’ve known it. This show focuses on the artistic process, highlighting how the proliferation of work afforded by digital tools often leads the artist to spend as much time curating as creating. However, it can be hard for the viewer to gather much context when looking at just one or two works by an artist. So as part of my prompt, I also asked the artists to leverage Edward Tufte’s concept of small multiples, which display a set of images in close proximity together in order to facilitate comparisons across the full group of images at a glance. — Artnome - Jason Bailey",
+  "interfaces": [
+    "TZIP-12"
+  ],
+  "homepage": "https://feralfile.com",
+  "authors": [
+    "Ilya Shkipin",
+    "Iskra Velitchkova",
+    "Jared S Tarbell",
+    "Sasha Belitskaja",
+    "Sofia Crespo"
+  ],
+  "views": []
+}

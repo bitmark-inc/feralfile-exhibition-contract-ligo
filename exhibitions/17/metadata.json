@@ -1,0 +1,20 @@
+{
+  "name": "WETWARE",
+  "description": "“Coined in the early 1990s by cultural theorist Sadie Plant and artist collective VNS Matrix, the word cyberfeminism takes on its prefix “cyber” — recast from Cybernetics, a 1948 book by Norbert Wiener, and “cyberspace,” from William Gibson’s 1984 novel Neuromancer — as a provocation. This cyberspace of the 1980s was stocked with cyberbabes and fembots, a techno-utopian imaginary of the male gaze. “Cyberfeminism” prompted women and marginalized communities to imagine how a reoriented cyberspace could look. By now, three decades after its origination, cyberfeminism has shifted from a loose artistic movement exploring the emancipatory potential of cyberspace towards a collective drive to provide software, hardware, and wetware education and to get marginalized groups online. Today, with questions of technology more and more clearly “bound together with questions of ecology and the economy,” as noted by Cornelia Sollfrank, the term is self-reflexive: technology is not only the subject of cyberfeminism, but its means of transmission. It’s all about feedback.” — Mindy Seu",
+  "interfaces": [
+    "TZIP-12"
+  ],
+  "homepage": "https://feralfile.com",
+  "authors": [
+    "Cornelia Sollfrank",
+    "Danielle Brathwaite-Shirley",
+    "Linda Dement",
+    "Mary Maggic",
+    "Morehshin Allahyari",
+    "Prema Murthy",
+    "Shu Lea Cheang",
+    "Skawennati",
+    "VNS Matrix"
+  ],
+  "views": []
+}

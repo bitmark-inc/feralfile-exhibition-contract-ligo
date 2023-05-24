@@ -1,0 +1,13 @@
+{
+  "name": "Culture3 x TED",
+  "description": "NFT souvenirs from Culture3 and TED.",
+  "interfaces": [
+    "TZIP-12"
+  ],
+  "imageUri": "ipfs://QmYRAr4iiW5TAWhq69UDCxEGG7hPEn3eSw2jcTAGxqPvTb",
+  "homepage": "https://feralfile.com/profiles/Culture3",
+  "authors": [
+    "Culture3"
+  ],
+  "views": []
+}
