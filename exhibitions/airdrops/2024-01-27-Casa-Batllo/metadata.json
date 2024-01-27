@@ -1,0 +1,14 @@
+{
+    "name": "Memento Structures of Being Mapping",
+    "description": "Sofia Crespo's Structures of Being Mapping Projection on Casa Batlló's Façade.",
+    "interfaces": [
+      "TZIP-12"
+    ],
+    "imageUri": "ipfs://Qma7E2suJkMpXDzdhapujDfZjYR5WQL9QVc2iCeDpVF37g",
+    "homepage": "https://feralfile.com",
+    "authors": [
+      "Sofia Crespo and Casa Batlló"
+    ],
+    "views": []
+  }
+  
