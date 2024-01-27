@@ -22,6 +22,12 @@ compile:
 compile-storage:
 	${LIGO} compile storage src/ff_main.mligo 'default_storage' -o compilation/storage.tz
 
+sb-compile:
+	${LIGO} compile contract src/ff_soulbound_main.mligo -o compilation/contract.tz
+
+sb-compile-storage:
+	${LIGO} compile storage src/ff_soulbound_main.mligo 'default_storage' -o compilation/storage.tz
+
 tc-init:
 	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes octez-client --endpoint $(shell jq -r .shell .env.json) config update
 	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes octez-client import secret key ff-deployer unencrypted:$(shell jq -r .key .env.json) --force
@@ -31,12 +37,18 @@ init-ledger:
 	octez-client --endpoint $(shell jq -r .shell .env.json) config update
 	octez-client import secret key ff-deployer "ledger://quarrelsome-moose-concrete-neanderthal/ed25519/0h/0h" --force
 deploy: tc-deploy
+sb-deploy: sb-deploy
 
 tc-dry-deploy: compile compile-storage
 	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes octez-client originate contract FFExhibition transferring 0 from ff-deployer \
 	running ./compilation/contract.tz -D --verbose-signing --burn-cap 15 --init '$(shell cat ./compilation/storage.tz)'
 
 tc-deploy: compile compile-storage
+	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes octez-client originate contract FFExhibition transferring 0 from ff-deployer \
+	running ./compilation/contract.tz --burn-cap 15 --init '$(shell cat ./compilation/storage.tz)'
+	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes octez-client forget all contracts --force
+
+sb-deploy: sb-compile sb-compile-storage
 	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes octez-client originate contract FFExhibition transferring 0 from ff-deployer \
 	running ./compilation/contract.tz --burn-cap 15 --init '$(shell cat ./compilation/storage.tz)'
 	TEZOS_CLIENT_UNSAFE_DISABLE_DISCLAIMER=yes octez-client forget all contracts --force
